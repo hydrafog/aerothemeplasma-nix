@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
-  aeroshell-kwin-repo
+  aeroshell-kwin-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aeroshell-flip3d";
@@ -15,4 +16,8 @@ stdenvNoCC.mkDerivation {
     runHook postInstall
   '';
   dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "kwin/tabbox/flip3d" ];
+  };
 }

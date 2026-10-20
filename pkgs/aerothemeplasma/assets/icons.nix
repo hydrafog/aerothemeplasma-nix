@@ -1,6 +1,8 @@
 {
+  lib,
   stdenvNoCC,
-  aerothemeplasma-icons-repo
+  aerothemeplasma-icons-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-icons";
@@ -14,4 +16,10 @@ stdenvNoCC.mkDerivation {
     runHook postUnpack
   '';
   dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "Windows 7 Aero" ];
+  };
+  
+  meta.license = lib.licenses.unfree;
 }

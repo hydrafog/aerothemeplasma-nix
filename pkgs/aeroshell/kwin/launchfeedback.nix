@@ -7,18 +7,19 @@
   cmake,
   ninja,
   lib,
-  session ? "wayland"
+  nyakisato
 }:
 stdenv.mkDerivation {
-  pname = "aeroshell-launchfeedback-${session}";
-  version = if session == "wayland" then "2026-06-18" else "2026-06-21";
+  pname = "aeroshell-launchfeedback";
+  version = "2026-10-03";
   src = aeroshell-kwin-repo;
 
-  buildInputs = [ kdePackages.qttools wayland-protocols ]
-    ++ lib.optionals (session == "x11") [ kdePackages.kwin-x11 ]
-    ++ lib.optionals (session == "wayland") [ kdePackages.kwin ];
+  buildInputs = [ kdePackages.qttools wayland-protocols kdePackages.kwin ];
   nativeBuildInputs = [ cmake pkg-config ninja kdePackages.wrapQtAppsHook ];
-  cmakeFlags = [ (lib.cmakeBool "KWIN_BUILD_WAYLAND" (session == "wayland")) ];
-  ninjaFlags = [ "launchfeedback${lib.optionalString (session == "x11") "-x11"}" ];
-  installTargets = "effects_cpp/${session}/startupfeedback/install";
+  ninjaFlags = [ "launchfeedback" ];
+  installTargets = "effects_cpp/startupfeedback/install";
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "effects_cpp/startupfeedback" ];
+  };
 }

@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
-  aeroshell-kwin-repo
+  aeroshell-kwin-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aeroshell-dimscreenaero";
@@ -15,4 +16,8 @@ stdenvNoCC.mkDerivation {
     runHook postInstall
   '';
   dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "kwin/effects/dimscreenaero" ];
+  };
 }

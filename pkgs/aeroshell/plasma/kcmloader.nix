@@ -3,7 +3,8 @@
   aeroshell-workspace-repo,
   kdePackages,
   pkg-config,
-  cmake
+  cmake,
+  nyakisato
 }:
 stdenv.mkDerivation {
   pname = "aeroshell-kcmloader";
@@ -13,4 +14,8 @@ stdenv.mkDerivation {
   preConfigure = "cd aeroshell-kcmloader";
   buildInputs = with kdePackages; [ kcmutils ];
   nativeBuildInputs = [ cmake pkg-config kdePackages.wrapQtAppsHook ];
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "aeroshell-kcmloader" ];
+  };
 }

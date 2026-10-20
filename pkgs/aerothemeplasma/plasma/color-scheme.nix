@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-color-scheme";
@@ -14,4 +15,9 @@ stdenvNoCC.mkDerivation {
     cp $src/plasma/color_scheme/Aero.colors $out/share/color-schemes
     runHook postInstall
   '';
+  dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/color_scheme/Aero.colors" ];
+  };
 }

@@ -1,10 +1,11 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-battery";
-  version = "2026-03-15";
+  version = "2026-10-12";
   src = aerothemeplasma-repo;
 
   dontUnpack = true;
@@ -14,4 +15,9 @@ stdenvNoCC.mkDerivation {
     cp -r $src/plasma/plasmoids/io.gitgud.wackyideas.battery $out/share/plasma/plasmoids
     runHook postInstall
   '';
+  dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/plasmoids/io.gitgud.wackyideas.battery" ];
+  };
 }

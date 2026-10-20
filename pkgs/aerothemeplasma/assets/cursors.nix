@@ -1,6 +1,8 @@
 {
+  lib,
   stdenvNoCC,
-  aerothemeplasma-icons-repo
+  aerothemeplasma-icons-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-cursors";
@@ -14,4 +16,10 @@ stdenvNoCC.mkDerivation {
     runHook postInstall
   '';
   dontFixup = true;
+  
+  passthru.updateScript = nyakisato {
+    subpaths = [ "aero-drop" ];
+  };
+
+  meta.license = lib.licenses.unfree;
 }

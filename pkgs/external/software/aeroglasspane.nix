@@ -5,6 +5,7 @@
   kdePackages,
   cmake,
   qt6,
+  nyakisato
 }:
 stdenv.mkDerivation {
   pname = "aeroglasspane";
@@ -24,4 +25,6 @@ stdenv.mkDerivation {
   meta = {
     mainProgram = "aero-glass-pane";
   };
+
+  passthru.updateScript = nyakisato { };
 }

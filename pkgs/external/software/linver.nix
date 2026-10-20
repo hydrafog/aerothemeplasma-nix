@@ -3,18 +3,19 @@
   lib,
   fetchFromGitLab,
   qt6,
-  lsb-release
+  lsb-release,
+  nyakisato
 }:
 stdenv.mkDerivation {
   pname = "linver";
-  version = "2025-01-17";
+  version = "2026-01-04";
 
   src = fetchFromGitLab {
     domain = "gitgud.io";
     owner = "wackyideas";
     repo = "linver";
-    rev = "c658184980a10c858180c333a8d4f6d3199d0137";
-    sha256 = "sha256-Z0GtA9F2K4zwNryicVLrjLWCwMVr8UZH4DiiQW9yiOw=";
+    rev = "087f2746703d9c885de2e1a4f6360314283703f4";
+    sha256 = "sha256-QeoXvKWuSCzH82krr6AnBpqwKFBhPaQiGEmy+N1Qz+g=";
   };
 
   buildInputs = [ qt6.qtbase ];
@@ -23,4 +24,6 @@ stdenv.mkDerivation {
 
   postPatch = "substituteInPlace linver.pro --replace-fail 'target.path = /usr/bin' \"target.path = $out/bin\"";
   qtWrapperArgs = [ "--prefix PATH : ${lib.makeBinPath [lsb-release]}" ];
+
+  passthru.updateScript = nyakisato { };
 }

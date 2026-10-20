@@ -4,29 +4,33 @@
   aerothemeplasma-repo,
   xdg,
   kdePackages,
-  cmake,
-  session ? "wayland"
+  nyakisato
 }:
 stdenv.mkDerivation {
-  pname = "aerothemeplasma-login-session-${session}";
-  version = "2026-03-14";
+  pname = "aerothemeplasma-login-session";
+  version = "2026-10-12";
   src = aerothemeplasma-repo;
 
-  preConfigure = "cd plasma/sddm/login-sessions";
-  nativeBuildInputs = [ cmake ];
-  buildInputs = [ kdePackages.extra-cmake-modules ];
-  cmakeFlags = [ (lib.cmakeBool "INSTALL_X11_COMPONENTS" (session == "x11")) ];
+  installPhase = ''
+    cd plasma/sddm/login-sessions
 
-  postFixup = if (session == "wayland") then ''
-    substituteInPlace $out/bin/startatp-wayland \
-      --replace-fail "$out/libexec/plasma-dbus-run-session-if-needed" "${kdePackages.plasma-workspace}/libexec/plasma-dbus-run-session-if-needed" \
-      --replace-fail "$out/bin/startplasma-wayland" "${kdePackages.plasma-workspace}/bin/startplasma-${session}" \
+    substituteInPlace startatp-wayland.cmake \
+      --replace-fail "@CMAKE_INSTALL_FULL_LIBEXECDIR@/plasma-dbus-run-session-if-needed" "${kdePackages.plasma-workspace}/libexec/plasma-dbus-run-session-if-needed" \
+      --replace-fail "\''${CMAKE_INSTALL_FULL_BINDIR}/startplasma-wayland" "${kdePackages.plasma-workspace}/bin/startplasma-wayland" \
       --replace-fail "/etc/xdg/aerothemeplasma:/etc/xdg:" "${xdg}/etc/xdg:"
-  '' else ''
-    substituteInPlace $out/bin/startatp \
-      --replace-fail "startplasma-x11" "${kdePackages.plasma-workspace}/bin/startplasma-x11" \
-      --replace-fail "/etc/xdg/aerothemeplasma:/etc/xdg:" "${xdg}/etc/xdg:"
+
+    substituteInPlace aerothemeplasma.desktop.cmake \
+      --replace-fail "\''${CMAKE_INSTALL_FULL_BINDIR}/startatp-wayland" "$out/bin/startatp-wayland" \
+      --replace-fail "\''${PROJECT_VERSION}" "$(grep -m 1 "PROJECT_VERSION" ../../../CMakeLists.txt | sed "s/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/")"
+
+    install -Dm555 startatp-wayland.cmake $out/bin/startatp-wayland
+    install -Dm444 aerothemeplasma.desktop.cmake $out/share/wayland-sessions/aerothemeplasma.desktop
   '';
 
-  passthru.providedSessions = if (session == "wayland") then [ "aerothemeplasma" ] else [ "aerothemeplasmax11" ];
+  passthru = {
+    providedSessions = [ "aerothemeplasma" ];
+    updateScript = nyakisato {
+      subpaths = [ "plasma/sddm/login-sessions" ];
+    };
+  };
 }

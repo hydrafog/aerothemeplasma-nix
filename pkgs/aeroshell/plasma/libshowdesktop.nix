@@ -3,7 +3,8 @@
   aeroshell-workspace-repo,
   kdePackages,
   cmake,
-  ninja
+  ninja,
+  nyakisato
 }:
 stdenv.mkDerivation {
   pname = "aeroshell-libshowdesktop";
@@ -23,4 +24,8 @@ stdenv.mkDerivation {
     ninja libshowdesktop/install
     runHook postInstall
   '';
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "libshowdesktop" ];
+  };
 }

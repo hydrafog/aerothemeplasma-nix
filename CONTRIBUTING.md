@@ -31,9 +31,9 @@ Your NixOS configuration should have these options:
 The command to run the VM differs depending on the host distro. Run one of these in the project folder:
 ```
 # on NixOS
-nix run .#nixosConfigurations.atp.config.system.build.vm
+NIXPKGS_ALLOW_UNFREE=1 nix run --impure .#nixosConfigurations.atp.config.system.build.vm
 # not on NixOS
-nix run --impure github:nix-community/nixGL -- nix run .#nixosConfigurations.atp.config.system.build.vm
+NIXPKGS_ALLOW_UNFREE=1 nix run --impure github:nix-community/nixGL -- nix run --impure .#nixosConfigurations.atp.config.system.build.vm
 ```
 
 Nix will prepare some packages in `/nix/store`, so your first time will take a while. Future builds will reuse the existing packages, and editing packages will rebuild only them and their dependents. When the VM is ready, virt-viewer will automatically open (the password is `anon`).

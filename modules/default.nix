@@ -4,12 +4,14 @@ let
   cfg = config.programs.aeroshell;
   pvcfg = if cfg.aerothemeplasma.plymouth.enable then cfg.aerothemeplasma.plymouth else cfg.vistathemeplasma.plymouth;
   atpkgs = perSystem.config.packages;
-  withSessions = list: lib.concatMap (pkg:
-    lib.optional cfg.sessions.wayland.enable (pkg.override { session = "wayland"; })
-    ++ lib.optional cfg.sessions.x11.enable (pkg.override { session = "x11"; })
-  ) list;
 in
 {
+  imports = [
+    (lib.mkRemovedOptionModule [ "programs" "aeroshell" "sessions" ] ''
+      `programs.aeroshell.sessions` no longer has any effect, as Wayland is now the only available session.
+    '')
+  ];
+
   options.programs = {
     aeroshell = rec {
       enable = lib.mkEnableOption "AeroShell";
@@ -18,10 +20,6 @@ in
         enable = lib.mkEnableOption "the Segoe UI and Lucida Console fonts";
         segoe.enable = lib.mkEnableOption "the Segoe UI font";
         lucida.enable = lib.mkEnableOption "the Lucida Console font";
-      };
-      sessions = {
-        wayland.enable = lib.mkEnableOption "the Wayland session" // { default = true; };
-        x11.enable = lib.mkEnableOption "the X11 session" // { default = config.services.xserver.enable; };
       };
       aerothemeplasma = {
         enable = lib.mkEnableOption "AeroThemePlasma, a set of Plasma theme packages";
@@ -60,26 +58,12 @@ in
         '';
       }
       {
-        assertion = cfg.sessions.wayland.enable || cfg.sessions.x11.enable;
-        message = ''
-          Both sessions under programs.aeroshell.sessions are disabled. How did that happen?
-          Please enable one like so: programs.aeroshell.sessions.<wayland/x11>.enable = true;
-        '';
-      }
-      {
-        assertion = cfg.sessions.x11.enable -> config.services.xserver.enable;
-        message = ''
-          The X11 session requires the X server to be enabled.
-          Enable it like so: "services.xserver.enable = true;"
-        '';
-      }
-      {
         assertion = !(cfg.aerothemeplasma.plymouth.enable && cfg.vistathemeplasma.plymouth.enable);
         message = "Both Plymouth styles under programs.aeroshell are enabled. Choose one.";
       }
     ];
 
-    services.displayManager.sessionPackages = lib.mkIf cfg.aerothemeplasma.enable (withSessions [ atpkgs.login-session ]);
+    services.displayManager.sessionPackages = lib.mkIf cfg.aerothemeplasma.enable [ atpkgs.login-session ];
     
     environment.systemPackages = with atpkgs; [
       pkgs.kdePackages.qtmultimedia libplasma plasma-workspace
@@ -87,10 +71,9 @@ in
       dimscreenaero fadingpopupsaero flip3d loginaero smod smodpeekeffect 
       kwin-shared-data smodpeekscript squashaero thumbnail-aero thumbnails
 
-      kcmloader libaeroshellutils libshowdesktop libtaskmanager
-    ] ++ withSessions (with atpkgs; [
+      components kcmloader libaeroshellutils libshowdesktop libtaskmanager
       aeroglassblur aeroglide launchfeedback smodglow smodsnap
-    ]) ++ (with atpkgs; lib.optionals cfg.aerothemeplasma.enable [
+    ] ++ (with atpkgs; lib.optionals cfg.aerothemeplasma.enable [
       cursors icons sounds
 
       atpootb authui7 color-scheme kvantum-windows7aero

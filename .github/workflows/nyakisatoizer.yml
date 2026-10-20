@@ -1,0 +1,37 @@
+name: "nyakisatoizer"
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 17 * * *"
+      timezone: "Europe/Oslo"
+
+env:
+  GH_TOKEN: ${{ secrets.PAT_NYAKISATO }}
+
+jobs:
+  nyakisatoizer:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+    - name: Locate fork
+      run: echo "REPO_NAME=$(echo '${{ github.repository }}' | sed 's/${{ github.repository_owner }}/nyakisato/')" >> $GITHUB_ENV
+    - name: Update fork
+      run: gh repo sync --force "$REPO_NAME" 
+  
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        repository: ${{ env.REPO_NAME }}
+        token: ${{ secrets.PAT_NYAKISATO }}
+    - name: Set Git author
+      run: |
+        git config user.name nyakisato
+        git config user.email 324829906+nyakisato@users.noreply.github.com
+        gh auth setup-git
+    
+    - uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702
+    - name: Nyakisatoize
+      run: nix run .#nyakisatoizer
+      env:
+        GHA_TOKEN: ${{ github.token }}

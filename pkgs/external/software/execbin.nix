@@ -2,7 +2,8 @@
   stdenv,
   fetchFromGitLab,
   kdePackages,
-  cmake
+  cmake,
+  nyakisato
 }:
 stdenv.mkDerivation {
   pname = "execbin";
@@ -17,4 +18,6 @@ stdenv.mkDerivation {
 
   buildInputs = with kdePackages; [ extra-cmake-modules qtbase kwindowsystem ];
   nativeBuildInputs = [ cmake kdePackages.wrapQtAppsHook ];
+
+  passthru.updateScript = nyakisato { };
 }

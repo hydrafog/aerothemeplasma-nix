@@ -30,22 +30,22 @@
               domain = "gitgud.io";
               owner = "aeroshell";
               repo = "aeroshell-kwin-components";
-              rev = "ba5b59a4b5270a71a17768e0e7a22dc1be926833";
-              hash = "sha256-w+C0bNbf23GIyDcAtjqfDsRXI1dTx2KqU7x+6/cG4rE=";
+              rev = "4a28963f1f751e93350e86e2b5bf1afb5380fcd6";
+              hash = "sha256-KqqYOZxzxpN8nj0uMw28vEJI8phw3sO/we3rGZG5Edk=";
             };
             aeroshell-smod-repo = pkgs.fetchFromGitLab {
               domain = "gitgud.io";
               owner = "aeroshell";
               repo = "smod";
-              rev = "b93cffd1d06a34cb89223270fc6256d1ba557e22";
-              hash = "sha256-LB5uKwxmQHctZJHixhlcpg9Mp+SztnYPnuRX0l+9xoM=";
+              rev = "67e24c0212a955a8684701cdde05c27215618e7b";
+              hash = "sha256-bPF42Y6WhyMT/l8ENh9tXFSWfSbD/CCN6yx7RGukw4Y=";
             };
             aeroshell-workspace-repo = pkgs.fetchFromGitLab {
               domain = "gitgud.io";
               owner = "aeroshell";
               repo = "aeroshell-workspace";
-              rev = "00a39ba08f3b9441b0883f1b82fc4e7e9e6a44b7";
-              hash = "sha256-UGT+MaFwSgLzacdwZTLhaxW5qhaSVa6ZFE6F4XCaHbE=";
+              rev = "abb45d8d00e128e2cb85ec608161ad498abd3a20";
+              hash = "sha256-OZHDjT1s732wmlEeyvAjG1D+zWjz9O6lGYVhZlPfKBw=";
             };
             aerothemeplasma-icons-repo = pkgs.fetchFromGitLab {
               domain = "gitgud.io";
@@ -58,10 +58,10 @@
               domain = "gitgud.io";
               owner = "aeroshell";
               repo = "atp/aerothemeplasma";
-              rev = "f724417af98ad75e8e001ae1711068e297904d4f";
-              hash = "sha256-Jq7aQ3S11edx/CJC3qJOchTDeWepI2XGpZ5/+FmaGy8=";
+              rev = "c4a82b5c32338081676958cfb05815aa713ea6c5";
+              hash = "sha256-GA0DV0mwO//TPZrCgHO3E5m1dVcnIrZEmd/QmxDesfU=";
             };
-            
+
             libplasma = self.callPackage ./pkgs/aeroshell/hacks/libplasma.nix {};
             plasma-workspace = self.callPackage ./pkgs/aeroshell/hacks/plasma-workspace.nix {};
 
@@ -82,6 +82,7 @@
             thumbnail-aero = self.callPackage ./pkgs/aeroshell/kwin/thumbnail-aero.nix {};
             thumbnails = self.callPackage ./pkgs/aeroshell/kwin/thumbnails.nix {};
 
+            components = self.callPackage ./pkgs/aeroshell/plasma/components.nix {};
             kcmloader = self.callPackage ./pkgs/aeroshell/plasma/kcmloader.nix {};
             libaeroshellutils = self.callPackage ./pkgs/aeroshell/plasma/libaeroshellutils.nix {};
             libshowdesktop = self.callPackage ./pkgs/aeroshell/plasma/libshowdesktop.nix {};
@@ -125,6 +126,9 @@
 
             plymouthvista = self.callPackage ./pkgs/external/system/plymouthvista.nix {};
             uac-polkit-agent = self.callPackage ./pkgs/external/system/uac-polkit-agent.nix {};
+
+            nyakisato = self.callPackage ./pkgs/internal/nyakisato.nix {};
+            nyakisatoizer = self.callPackage ./pkgs/internal/nyakisatoizer.nix {};
           })
         );
       };

@@ -1,16 +1,18 @@
 {
+  lib,
   stdenvNoCC,
-  fetchFromGitLab
+  fetchFromGitLab,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-sounds";
-  version = "2026-01-29";
+  version = "2026-01-09";
   src = fetchFromGitLab {
     domain = "gitgud.io";
     owner = "aeroshell";
     repo = "atp/aerothemeplasma-sounds";
-    rev = "4926188adcfed7ee699b53d3fb88e1996d67543d";
-    hash = "sha256-nGZtC0cC0hBWIX0zkwsdQ4klGhCy6KuEajvxtKH7Q0Q=";
+    rev = "55d2f5fd15f53cccbbb13388941b930442db1159";
+    hash = "sha256-z73owMl2+mAQJKGgjuJAmPIYOYuoVug0nWZ3WqWY0DY=";
   };
 
   # not using upstream's CMakeLists here because.. it's just files
@@ -21,4 +23,25 @@ stdenvNoCC.mkDerivation {
     runHook postInstall
   '';
   dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [
+      "Windows 7 Afternoon"
+      "Windows 7 Calligraphy"
+      "Windows 7 Characters"
+      "Windows 7 Cityscape"
+      "Windows 7 Delta"
+      "Windows 7 Festival"
+      "Windows 7 Garden"
+      "Windows 7 Heritage"
+      "Windows 7 Landscape"
+      "Windows 7 Quirky" # me too
+      "Windows 7 Raga"
+      "Windows 7 Savanna"
+      "Windows 7 Sonata"
+      "Windows 7"
+    ];
+  };
+
+  meta.license = lib.licenses.unfree;
 }

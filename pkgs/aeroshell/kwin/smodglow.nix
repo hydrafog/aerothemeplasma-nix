@@ -6,19 +6,18 @@
   smod,
   cmake,
   lib,
-  session ? "wayland"
+  nyakisato
 }:
 stdenv.mkDerivation {
-  pname = "aeroshell-smodglow-${session}";
-  version = if session == "wayland" then "2026-08-22" else "2026-08-19";
+  pname = "aeroshell-smodglow";
+  version = "2026-10-03";
   src = aeroshell-smod-repo;
 
-  buildInputs = [ smod ]
-    ++ lib.optionals (session == "x11") [ kdePackages.kwin-x11 ]
-    ++ lib.optionals (session == "wayland") [ kdePackages.kwin ];
+  buildInputs = [ smod kdePackages.kwin ];
   nativeBuildInputs = [ cmake pkg-config kdePackages.wrapQtAppsHook ];
-  cmakeFlags = [ 
-    (lib.cmakeBool "BUILD_EFFECT" (session == "wayland"))
-    (lib.cmakeBool "BUILD_EFFECTX11" (session == "x11"))
-  ];
+  cmakeFlags = [ (lib.cmakeBool "BUILD_EFFECT" true) ];
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "gloweffect" ];
+  };
 }

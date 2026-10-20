@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-layout-template";
@@ -14,4 +15,9 @@ stdenvNoCC.mkDerivation {
     cp -r $src/plasma/layout-templates/io.gitgud.wackyideas.taskbar $out/share/plasma/layout-templates
     runHook postInstall
   '';
+  dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/layout-templates/io.gitgud.wackyideas.taskbar" ];
+  };
 }

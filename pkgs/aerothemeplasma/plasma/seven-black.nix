@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-seven-black";
@@ -14,4 +15,9 @@ stdenvNoCC.mkDerivation {
     cp -R $src/plasma/desktoptheme/Seven-Black $out/share/plasma/desktoptheme
     runHook postInstall
   '';
+  dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/desktoptheme/Seven-Black" ];
+  };
 }

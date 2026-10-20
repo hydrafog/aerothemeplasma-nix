@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-authui7";
@@ -20,4 +21,9 @@ stdenvNoCC.mkDerivation {
 
     runHook postInstall
   '';
+  dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/look-and-feel/authui7" ];
+  };
 }

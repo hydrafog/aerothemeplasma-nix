@@ -2,7 +2,7 @@
   stdenvNoCC,
   lib,
   aerothemeplasma-repo,
-  atpootb
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-xdg";
@@ -59,4 +59,9 @@ stdenvNoCC.mkDerivation {
 
     runHook postInstall
   '';
+  dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "misc/branding/kcminfo.png" "misc/xdg" ];
+  };
 }

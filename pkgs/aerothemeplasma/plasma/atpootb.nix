@@ -2,26 +2,29 @@
   stdenv,
   aerothemeplasma-repo,
   kdePackages,
+  pkg-config,
   cmake,
+  ninja,
+  nyakisato
 }:
 stdenv.mkDerivation {
   pname = "aerothemeplasma-atpootb";
-  version = "2026-06-19";
+  version = "2026-10-15";
   src = aerothemeplasma-repo;
-
-  preConfigure = "cd plasma/atpootb";
 
   postPatch = ''
     substituteInPlace plasma/atpootb/src/CMakeLists.txt \
       --replace-fail "\''${CMAKE_INSTALL_PREFIX}/share/dbus-1/interfaces/org.kde.kwin.Effects.xml" "${kdePackages.kwin}/share/dbus-1/interfaces/org.kde.kwin.Effects.xml"
   '';
 
-  buildInputs = with kdePackages; [kwin qttools];
-  nativeBuildInputs = [cmake kdePackages.wrapQtAppsHook];
+  buildInputs = with kdePackages; [ plasma-workspace knotifyconfig plasma5support ];
+  nativeBuildInputs = [ cmake pkg-config ninja kdePackages.wrapQtAppsHook ];
 
   cmakeFlags = [
     "-DKAUTH_ACTIONS_QML=false"
   ];
+  ninjaFlags = [ "atpootb" ];
+  installTargets = "plasma/atpootb/install";
 
   postInstall = ''
     mkdir -p $out/etc/xdg/autostart
@@ -32,5 +35,9 @@ stdenv.mkDerivation {
 
   meta = {
     mainProgram = "atpootb";
+  };
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/atpootb" ];
   };
 }

@@ -1,22 +1,23 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-shell";
-  version = "2026-08-20";
+  version = "2026-10-13";
   src = aerothemeplasma-repo;
 
   dontUnpack = true;
   installPhase = ''
     runHook preInstall
-
     mkdir -p $out/share/plasma/shells
     cp -r $src/plasma/shells/io.gitgud.wackyideas.desktop $out/share/plasma/shells
-    
-    substituteInPlace $out/share/plasma/shells/io.gitgud.wackyideas.desktop/contents/configuration/ConfigurationContainmentAppearance.qml \
-      --replace-fail "kwin_aeroglassblur_config.so" 'kwin_aeroglassblur_''${XDG_SESSION_TYPE}_config.so'
-    
     runHook postInstall
   '';
+  dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/shells/io.gitgud.wackyideas.desktop" ];
+  };
 }

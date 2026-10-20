@@ -10,12 +10,12 @@ let
     domain = "gitgud.io";
     owner = "aeroshell";
     repo = "libplasma";
-    rev = "d1c5ad5a1122514996f98ac746681650a8978f8f";
-    hash = "sha256-78pc7EJ37J2+lmcbKyE1ePwqJ7jbDSuvUcC0N9rmBWc=";
+    rev = "bc48942bbd5aa7fc6d62b050701eabbe2b31e054";
+    hash = "sha256-MWbTvNlpat8eP3S158kdDMIR0N5MerpCPS7z2uyRGTc=";
   };
   patch-target = fetchzip {
-    url = "mirror://kde/stable/plasma/6.7.0/libplasma-6.7.0.tar.xz";
-    hash = "sha256-YIFhiymeaYv0cJvM/8eSJw95J0L7nAq2HZou2IscznQ=";
+    url = "mirror://kde/stable/plasma/6.8.0/libplasma-6.8.0.tar.xz";
+    hash = "sha256-zcBF1eObm0hir04ayFpx8v0HsZAE6zgKB05qN8/hvu4=";
   };
 in
 kdePackages.libplasma.overrideAttrs (oldAttrs: {
@@ -35,7 +35,7 @@ kdePackages.libplasma.overrideAttrs (oldAttrs: {
     substituteInPlace src/**/*.qml --replace-quiet "import org.kde.plasma." "import io.gitgud.wackyideas.plasma."
 
     substituteInPlace src/declarativeimports/core/tooltipdialog.cpp --replace-fail \
-      'SourceFromModule("org.kde.plasma.' 'SourceFromModule("io.gitgud.wackyideas.plasma.'
+      'component(m_engine.get(), "org.kde.plasma.' 'component(m_engine.get(), "io.gitgud.wackyideas.plasma.'
 
     substituteInPlace src/declarativeimports/CMakeLists.txt --replace-fail "add_subdirectory(kirigamiplasmastyle)" ""
     substituteInPlace src/plasma/CMakeLists.txt --replace-fail "add_subdirectory(packagestructure)" ""

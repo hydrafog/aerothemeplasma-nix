@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-networkmanagement";
@@ -14,4 +15,9 @@ stdenvNoCC.mkDerivation {
     cp -r $src/plasma/plasmoids/io.gitgud.wackyideas.networkmanagement $out/share/plasma/plasmoids
     runHook postInstall
   '';
+  dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/plasmoids/io.gitgud.wackyideas.networkmanagement" ];
+  };
 }

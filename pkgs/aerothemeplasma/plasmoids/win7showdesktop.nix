@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-win7showdesktop";
@@ -14,4 +15,8 @@ stdenvNoCC.mkDerivation {
     cp -r $src/plasma/plasmoids/io.gitgud.wackyideas.win7showdesktop $out/share/plasma/plasmoids
     runHook postInstall
   '';
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/plasmoids/io.gitgud.wackyideas.win7showdesktop" ];
+  };
 }

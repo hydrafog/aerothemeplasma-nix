@@ -1,6 +1,7 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
+  nyakisato
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-sddm-theme-mod";
@@ -14,4 +15,9 @@ stdenvNoCC.mkDerivation {
     cp -r $src/plasma/sddm/sddm-theme-mod $out/share/sddm/themes
     runHook postInstall
   '';
+  dontFixup = true;
+
+  passthru.updateScript = nyakisato {
+    subpaths = [ "plasma/sddm/sddm-theme-mod" ];
+  };
 }

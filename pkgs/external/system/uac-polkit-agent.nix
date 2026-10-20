@@ -4,6 +4,7 @@
   fetchFromGitLab,
   cmake,
   kdePackages,
+  nyakisato
 }:
 stdenv.mkDerivation {
   pname = "uac-polkit-agent";
@@ -11,10 +12,10 @@ stdenv.mkDerivation {
     domain = "gitgud.io";
     owner = "aeroshell";
     repo = "uac-polkit-agent";
-    rev = "e2f42e6ada98bbcd944b83f2575c0a62ea766b71";
-    hash = "sha256-rrUkI6fbG4HywPPS1u4PBGyveT9ylWJPv/9n5G8FlzM=";
+    rev = "5627680e94bf1d24769b1b0d25e21679e269d9b6";
+    hash = "sha256-0YfvSjWDB//lGeyzqlBoVyqpt5affp1rIU5xsgn2vLs=";
   };
-  version = "2026-04-07";
+  version = "2026-10-16";
 
   buildInputs = with kdePackages; [
     qtbase
@@ -42,4 +43,6 @@ stdenv.mkDerivation {
       --replace-fail "/bin/sh" "${pkgs.bash}/bin/bash" \
       --replace-fail "$out/libexec/polkit-kde-authentication-agent-1" "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1"
   '';
+
+  passthru.updateScript = nyakisato { };
 }
