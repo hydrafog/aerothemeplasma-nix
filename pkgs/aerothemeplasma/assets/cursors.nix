@@ -20,6 +20,4 @@ stdenvNoCC.mkDerivation {
   passthru.updateScript = nyakisato {
     subpaths = [ "aero-drop" ];
   };
-
-  meta.license = lib.licenses.unfree;
 }

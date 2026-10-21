@@ -42,6 +42,4 @@ stdenvNoCC.mkDerivation {
       "Windows 7"
     ];
   };
-
-  meta.license = lib.licenses.unfree;
 }

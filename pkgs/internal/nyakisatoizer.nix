@@ -147,7 +147,7 @@ writeShellApplication {
         PRbody="
 Try this in the VM:
 \`\`\`bash
-NIXPKGS_ALLOW_UNFREE=1 nix run --impure github:nix-community/nixGL -- nix run --impure nix run github:$REPO_NAME/update/$target#nixosConfigurations.atp.config.system.build.vm
+nix run --impure github:nix-community/nixGL -- nix run github:$REPO_NAME/update/$target#nixosConfigurations.atp.config.system.build.vm
 \`\`\`
 $targetCommitBody
 "

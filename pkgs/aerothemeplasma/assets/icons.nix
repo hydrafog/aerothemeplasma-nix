@@ -20,6 +20,4 @@ stdenvNoCC.mkDerivation {
   passthru.updateScript = nyakisato {
     subpaths = [ "Windows 7 Aero" ];
   };
-  
-  meta.license = lib.licenses.unfree;
 }
