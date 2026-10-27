@@ -15,6 +15,7 @@ stdenvNoCC.mkDerivation {
     shopt -s nullglob
     for f in ${libplasma}/lib/libATPlasma.so* ${libplasma}/lib/libATPlasmaQuick.so*; do
       name=$(basename "$f")
+      ln -s "$f" "$out/lib/$name"
       ln -s "$f" "$out/lib/''${name/libATPlasma/libPlasma}"
     done
     runHook postInstall
