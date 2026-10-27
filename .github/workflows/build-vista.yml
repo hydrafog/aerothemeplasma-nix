@@ -1,0 +1,62 @@
+name: Build VistaThemePlasma cache
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - vista-support-6.7
+    paths:
+      - "flake.nix"
+      - "flake.lock"
+      - "pkgs/vistathemeplasma/**"
+      - ".github/workflows/build-vista.yml"
+
+permissions:
+  contents: read
+
+env:
+  # Must match the nixpkgs revision used by the dotfiles that consume this
+  # branch, otherwise the produced store paths cannot be substituted locally.
+  NIXPKGS_REV: 279b4a8275f032c566576b3f181fa0f27197f588
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            accept-flake-config = true
+
+      - name: Build VistaThemePlasma
+        run: |
+          nix build --no-link --print-build-logs --print-out-paths \
+            --override-input nixpkgs "github:NixOS/nixpkgs/$NIXPKGS_REV" \
+            .#packages.x86_64-linux.vistathemeplasma \
+            .#packages.x86_64-linux.vistathemeplasma-icons \
+            .#packages.x86_64-linux.vistathemeplasma-cursors \
+            .#packages.x86_64-linux.vistathemeplasma-sounds \
+            | tee paths.txt
+
+      - name: Create portable binary cache
+        run: |
+          mkdir -p binary-cache
+          xargs -r nix copy --no-recursive --to "file://$PWD/binary-cache" < paths.txt
+          xargs -r nix path-info --json < paths.txt > binary-cache/paths.json
+          test -f binary-cache/nix-cache-info
+          du -sh binary-cache
+
+      - name: Upload binary cache
+        uses: actions/upload-artifact@v7
+        with:
+          name: vista-nix-cache
+          path: binary-cache
+          if-no-files-found: error
+          retention-days: 7

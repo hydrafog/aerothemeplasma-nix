@@ -256,6 +256,7 @@ in
         cfg.vistathemeplasma.icons.package
         cfg.vistathemeplasma.cursors.package
         cfg.vistathemeplasma.sounds.package
+        (pkg "aeroshell-vista-session")
       ]
       ++ lib.optionals (cfg.aerothemeplasma.enable || cfg.vistathemeplasma.enable) [
         pkgs.kdePackages.qtstyleplugin-kvantum

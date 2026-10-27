@@ -47,37 +47,21 @@ kdePackages.plasma-workspace.overrideAttrs (oldAttrs: {
     ninja shell/install libkworkspace/install
     rm -rf $out/lib/qt-6
     
-    # drop-ins to make startplasma prefer aeroshell over plasmashell in the
-    # theme login sessions.  AeroThemePlasma and VistaThemePlasma use
-    # different shell IDs, but the same aeroshell binary, so give VTP its own
-    # unit with a disjoint condition.
-    mkdir -p $out/share/systemd/user/plasma-{core.target,plasmashell.service,aeroshell.service,vistathemeplasma.service}.d
+    # drop-ins to make startplasma prefer aeroshell over plasmashell in the theme's login session
+    mkdir -p $out/share/systemd/user/plasma-{core.target,plasmashell.service,aeroshell.service}.d
 
     cat > $out/share/systemd/user/plasma-core.target.d/aeroshell.conf << EOF
     [Unit]
-    Wants=plasma-aeroshell.service plasma-vistathemeplasma.service
+    Wants=plasma-aeroshell.service
     EOF
-
     cat > $out/share/systemd/user/plasma-plasmashell.service.d/aeroshell.conf << EOF
     [Unit]
     ConditionEnvironment=!PLASMA_DEFAULT_SHELL=io.gitgud.wackyideas.desktop
-    ConditionEnvironment=!PLASMA_DEFAULT_SHELL=io.gitgud.catpswin56.desktop
     EOF
-
     cat > $out/share/systemd/user/plasma-aeroshell.service.d/aeroshell.conf << EOF
     [Unit]
     ConditionEnvironment=PLASMA_DEFAULT_SHELL=io.gitgud.wackyideas.desktop
     EOF
-
-    cat > $out/share/systemd/user/plasma-vistathemeplasma.service.d/vistathemeplasma.conf << EOF
-    [Unit]
-    ConditionEnvironment=PLASMA_DEFAULT_SHELL=io.gitgud.catpswin56.desktop
-    EOF
-
-    cp $out/share/systemd/user/plasma-aeroshell.service \
-      $out/share/systemd/user/plasma-vistathemeplasma.service
-    substituteInPlace $out/share/systemd/user/plasma-vistathemeplasma.service \
-      --replace-fail "Description=AeroShell Workspace" "Description=VistaThemePlasma Workspace"
 
     runHook postInstall
   '';

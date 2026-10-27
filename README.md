@@ -106,6 +106,38 @@ programs.aeroshell.vistathemeplasma.icons.package = my-icons;
 programs.aeroshell.aerothemeplasma.sddm.package = my-sddm-theme;
 ```
 
+### Prebuilt binary cache
+VistaThemePlasma is expensive to compile on low-power machines.  The fork's
+[`build-vista` workflow](.github/workflows/build-vista.yml) builds the VTP
+packages on GitHub Actions and uploads them as an unsigned Nix binary cache.
+
+Download the latest artifact from the repository's **Actions** tab, or with
+GitHub CLI:
+
+```bash
+gh run download --repo hydrafog/aerothemeplasma-nix \
+  --name vista-nix-cache -D vista-cache
+```
+
+Then import the paths into your local store:
+
+```bash
+sudo nix copy --no-check-sigs --from "file://$PWD/vista-cache" \
+  '.#packages.x86_64-linux.vistathemeplasma' \
+  '.#packages.x86_64-linux.vistathemeplasma-icons' \
+  '.#packages.x86_64-linux.vistathemeplasma-cursors' \
+  '.#packages.x86_64-linux.vistathemeplasma-sounds'
+```
+
+The tiny `aeroshell-vista-session` package is not included in the cache because
+it only copies a service file and builds in seconds against the already
+installed `plasma-workspace`.
+
+Your normal `nixos-rebuild switch` will then reuse those store paths instead of
+recompiling VTP.  The cache is unsigned and intentionally only contains the
+custom packages; their ordinary dependencies still come from the official Nix
+cache.
+
 ### Upstream packaging
 An AeroThemePlasma package and NixOS module have been proposed for nixpkgs
 (see [nixpkgs#560156](https://github.com/NixOS/nixpkgs/pull/560156)).  This

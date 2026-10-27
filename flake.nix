@@ -145,6 +145,7 @@
             vistathemeplasma-icons = self.callPackage ./pkgs/vistathemeplasma/assets/icons.nix {};
             vistathemeplasma-cursors = self.callPackage ./pkgs/vistathemeplasma/assets/cursors.nix {};
             vistathemeplasma-sounds = self.callPackage ./pkgs/vistathemeplasma/assets/sounds.nix {};
+            aeroshell-vista-session = self.callPackage ./pkgs/aeroshell/session/vista.nix {};
 
             segoe-ui = self.callPackage ./pkgs/external/fonts/segoe-ui.nix {};
             lucida-console = self.callPackage ./pkgs/external/fonts/lucida-console.nix {};
