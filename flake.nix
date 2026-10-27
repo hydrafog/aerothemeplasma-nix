@@ -61,6 +61,31 @@
               rev = "f724417af98ad75e8e001ae1711068e297904d4f";
               hash = "sha256-Jq7aQ3S11edx/CJC3qJOchTDeWepI2XGpZ5/+FmaGy8=";
             };
+
+            # VistaThemePlasma shares AeroShell's library components, but keeps
+            # its own shell, plasmoids, and assets.  This is the Plasma/6.7
+            # branch, which matches the Plasma version in nixpkgs at the time
+            # of writing.
+            vistathemeplasma-repo = pkgs.fetchFromGitHub {
+              owner = "aeroshell-desktop";
+              repo = "vistathemeplasma";
+              rev = "209081cbd4a6d978a901e2f85812efd9400540e7";
+              hash = "sha256-Jgx5l2vbVChVyx4YGdtGDwZYLuzCP6vYHX62KTRRGKM=";
+            };
+            vistathemeplasma-icons-repo = pkgs.fetchFromGitLab {
+              domain = "gitgud.io";
+              owner = "aeroshell";
+              repo = "vtp/vistathemeplasma-icons";
+              rev = "643c34b0b2afbf84689277700d05950ee415bd9e";
+              hash = "sha256-QgWWdfxi5EUrLOJGumeCIgxhShG9/Zadu7Zk8iukjXk=";
+            };
+            vistathemeplasma-sounds-repo = pkgs.fetchFromGitLab {
+              domain = "gitgud.io";
+              owner = "aeroshell";
+              repo = "vtp/vistathemeplasma-sounds";
+              rev = "dabc6bfcbc3a0b092f9317861e4fd10d53c986ce";
+              hash = "sha256-2FdRBQt4Rnhu4jQhqV1mPWDGKRYregdjoAfjwvMFn5g=";
+            };
             
             libplasma = self.callPackage ./pkgs/aeroshell/hacks/libplasma.nix {};
             plasma-workspace = self.callPackage ./pkgs/aeroshell/hacks/plasma-workspace.nix {};
@@ -115,6 +140,11 @@
 
             login-session = self.callPackage ./pkgs/aerothemeplasma/system/login-session.nix {};
             sddm-theme-mod = self.callPackage ./pkgs/aerothemeplasma/system/sddm-theme-mod.nix {};
+
+            vistathemeplasma = self.callPackage ./pkgs/vistathemeplasma/default.nix {};
+            vistathemeplasma-icons = self.callPackage ./pkgs/vistathemeplasma/assets/icons.nix {};
+            vistathemeplasma-cursors = self.callPackage ./pkgs/vistathemeplasma/assets/cursors.nix {};
+            vistathemeplasma-sounds = self.callPackage ./pkgs/vistathemeplasma/assets/sounds.nix {};
 
             segoe-ui = self.callPackage ./pkgs/external/fonts/segoe-ui.nix {};
             lucida-console = self.callPackage ./pkgs/external/fonts/lucida-console.nix {};
