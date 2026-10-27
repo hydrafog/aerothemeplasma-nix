@@ -64,9 +64,8 @@ jobs:
             echo "::error::tail: $line"
           done || true
 
-      - name: Create portable binary cache
+      - name: Create portable store export
         run: |
-          mkdir -p binary-cache
           nix path-info --json \
             --override-input nixpkgs "github:NixOS/nixpkgs/$NIXPKGS_REV" \
             .#packages.x86_64-linux.vistathemeplasma \
@@ -75,16 +74,17 @@ jobs:
             .#packages.x86_64-linux.vistathemeplasma-sounds \
             > packages.json
           jq -r '.[].path' packages.json > paths.clean
-          test -s paths.clean
-          xargs -r nix copy --no-recursive --to "file://$PWD/binary-cache" < paths.clean
-          cp packages.json binary-cache/paths.json
-          test -f binary-cache/nix-cache-info
-          du -sh binary-cache
+          mapfile -t paths < paths.clean
+          test "${#paths[@]}" -gt 0
+          nix-store --export "${paths[@]}" > vista-store.export
+          ls -lh vista-store.export
 
-      - name: Upload binary cache
+      - name: Upload store export
         uses: actions/upload-artifact@v7
         with:
-          name: vista-nix-cache
-          path: binary-cache
+          name: vista-store
+          path: |
+            vista-store.export
+            packages.json
           if-no-files-found: error
           retention-days: 7

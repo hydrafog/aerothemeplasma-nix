@@ -106,37 +106,32 @@ programs.aeroshell.vistathemeplasma.icons.package = my-icons;
 programs.aeroshell.aerothemeplasma.sddm.package = my-sddm-theme;
 ```
 
-### Prebuilt binary cache
+### Prebuilt build artifact
 VistaThemePlasma is expensive to compile on low-power machines.  The fork's
 [`build-vista` workflow](.github/workflows/build-vista.yml) builds the VTP
-packages on GitHub Actions and uploads them as an unsigned Nix binary cache.
+packages on GitHub Actions and uploads a portable Nix store export.
 
 Download the latest artifact from the repository's **Actions** tab, or with
 GitHub CLI:
 
 ```bash
 gh run download --repo hydrafog/aerothemeplasma-nix \
-  --name vista-nix-cache -D vista-cache
+  --name vista-store -D vista-store
 ```
 
-Then import the paths into your local store:
+Then import the custom store paths:
 
 ```bash
-sudo nix copy --no-check-sigs --from "file://$PWD/vista-cache" \
-  '.#packages.x86_64-linux.vistathemeplasma' \
-  '.#packages.x86_64-linux.vistathemeplasma-icons' \
-  '.#packages.x86_64-linux.vistathemeplasma-cursors' \
-  '.#packages.x86_64-linux.vistathemeplasma-sounds'
+sudo nix-store --import < vista-store/vista-store.export
 ```
 
-The tiny `aeroshell-vista-session` package is not included in the cache because
-it only copies a service file and builds in seconds against the already
-installed `plasma-workspace`.
+Your normal `nixos-rebuild switch` will then reuse those paths instead of
+recompiling VTP.  The export intentionally contains only the custom packages;
+their ordinary dependencies come from the official Nix cache.
 
-Your normal `nixos-rebuild switch` will then reuse those store paths instead of
-recompiling VTP.  The cache is unsigned and intentionally only contains the
-custom packages; their ordinary dependencies still come from the official Nix
-cache.
+The tiny `aeroshell-vista-session` package is not included because it only
+copies a service file and builds in seconds against the already installed
+`plasma-workspace`.
 
 ### Upstream packaging
 An AeroThemePlasma package and NixOS module have been proposed for nixpkgs
