@@ -46,6 +46,8 @@ jobs:
             .#packages.x86_64-linux.vistathemeplasma-icons \
             .#packages.x86_64-linux.vistathemeplasma-cursors \
             .#packages.x86_64-linux.vistathemeplasma-sounds \
+            .#packages.x86_64-linux.vistathemeplasma-x11-session \
+            .#packages.x86_64-linux.wmptoolbar \
             > paths.txt 2> build.log
           mapfile -t paths < paths.txt
           test "${#paths[@]}" -gt 0

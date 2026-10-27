@@ -195,7 +195,10 @@ in
 
     services.displayManager.sessionPackages =
       lib.optionals cfg.aerothemeplasma.enable [ (pkg "login-session") ]
-      ++ lib.optionals cfg.vistathemeplasma.enable [ cfg.vistathemeplasma.package ];
+      ++ lib.optionals cfg.vistathemeplasma.enable [
+        cfg.vistathemeplasma.package
+        (pkg "vistathemeplasma-x11-session")
+      ];
 
     environment.systemPackages =
       [
@@ -256,7 +259,9 @@ in
         cfg.vistathemeplasma.icons.package
         cfg.vistathemeplasma.cursors.package
         cfg.vistathemeplasma.sounds.package
+        (pkg "wmptoolbar")
         (pkg "aeroshell-vista-session")
+        (pkg "vistathemeplasma-x11-session")
       ]
       ++ lib.optionals (cfg.aerothemeplasma.enable || cfg.vistathemeplasma.enable) [
         pkgs.kdePackages.qtstyleplugin-kvantum

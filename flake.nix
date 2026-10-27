@@ -86,6 +86,13 @@
               rev = "dabc6bfcbc3a0b092f9317861e4fd10d53c986ce";
               hash = "sha256-2FdRBQt4Rnhu4jQhqV1mPWDGKRYregdjoAfjwvMFn5g=";
             };
+            wmp-toolbar-repo = pkgs.fetchFromGitLab {
+              domain = "gitgud.io";
+              owner = "catpswin56";
+              repo = "wmp-toolbar-plasmoid";
+              rev = "b452aca090af4e9c5413c1476fd87ee4ae722c33";
+              hash = "sha256-bB2Du4EzBIyogs1/X/y2j8SB3tVQtW50aw2tiW04HYA=";
+            };
             
             libplasma = self.callPackage ./pkgs/aeroshell/hacks/libplasma.nix {};
             plasma-workspace = self.callPackage ./pkgs/aeroshell/hacks/plasma-workspace.nix {};
@@ -145,6 +152,8 @@
             vistathemeplasma-icons = self.callPackage ./pkgs/vistathemeplasma/assets/icons.nix {};
             vistathemeplasma-cursors = self.callPackage ./pkgs/vistathemeplasma/assets/cursors.nix {};
             vistathemeplasma-sounds = self.callPackage ./pkgs/vistathemeplasma/assets/sounds.nix {};
+            vistathemeplasma-x11-session = self.callPackage ./pkgs/vistathemeplasma/x11-session.nix {};
+            wmptoolbar = self.callPackage ./pkgs/vistathemeplasma/wmptoolbar.nix {};
             aeroshell-vista-session = self.callPackage ./pkgs/aeroshell/session/vista.nix {};
 
             segoe-ui = self.callPackage ./pkgs/external/fonts/segoe-ui.nix {};

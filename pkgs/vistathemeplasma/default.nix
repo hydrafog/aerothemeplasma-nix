@@ -1,6 +1,7 @@
 {
   stdenv,
   vistathemeplasma-repo,
+  libplasma,
   kdePackages,
   cmake,
   ninja,
@@ -64,7 +65,6 @@ stdenv.mkDerivation {
     kitemmodels
     kglobalaccel
     plasma5support
-    libplasma
     plasma-workspace
     plasma-activities
     plasma-activities-stats
@@ -78,6 +78,7 @@ stdenv.mkDerivation {
     libkscreen
     kpipewire
   ] ++ [
+    libplasma
     wayland
     wayland-protocols
     libdrm
@@ -100,7 +101,7 @@ stdenv.mkDerivation {
   # VTP's 6.7 CMake files link the unqualified `Plasma` library name in a
   # few plasmoids, so CMake does not propagate libplasma's include directory.
   # Add it explicitly instead of patching every upstream CMakeLists.
-  NIX_CFLAGS_COMPILE = "-I${kdePackages.libplasma.dev}/include/Plasma -I${kdePackages.libplasma.dev}/include/PlasmaQuick";
+  NIX_CFLAGS_COMPILE = "-I${libplasma.dev}/include/Plasma -I${libplasma.dev}/include/PlasmaQuick";
 
   cmakeFlags = [
     "-DBUILD_TESTING=OFF"
