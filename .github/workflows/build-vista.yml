@@ -17,7 +17,7 @@ permissions:
 env:
   # Must match the nixpkgs revision used by the dotfiles that consume this
   # branch, otherwise the produced store paths cannot be substituted locally.
-  NIXPKGS_REV: 279b4a8275f032c566576b3f181fa0f27197f588
+  NIXPKGS_REV: 304568616a94eee17b5b3343f699db8ea1cfb36f
 
 jobs:
   build:
