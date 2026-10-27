@@ -38,7 +38,9 @@ jobs:
       - name: Build VistaThemePlasma
         run: |
           set -o pipefail
-          nix build --no-link --print-build-logs \
+          free -h || true
+          df -h || true
+          nix build --max-jobs 2 --cores 2 --no-link --print-build-logs \
             --override-input nixpkgs "github:NixOS/nixpkgs/$NIXPKGS_REV" \
             .#packages.x86_64-linux.vistathemeplasma \
             .#packages.x86_64-linux.vistathemeplasma-icons \
@@ -55,8 +57,11 @@ jobs:
             tail -200 build.log || true
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-          tail -25 build.log | sed 's/%/%25/g' | sed 's/\r$//' | while IFS= read -r line; do
+          grep -inE 'error|fatal|killed|oom|no space|failed|out of memory' build.log | tail -15 | sed 's/%/%25/g' | sed 's/\r$//' | while IFS= read -r line; do
             echo "::error::$line"
+          done || true
+          tail -15 build.log | sed 's/%/%25/g' | sed 's/\r$//' | while IFS= read -r line; do
+            echo "::error::tail: $line"
           done || true
 
       - name: Create portable binary cache
