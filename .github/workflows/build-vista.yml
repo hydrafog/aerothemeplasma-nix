@@ -37,12 +37,24 @@ jobs:
 
       - name: Build VistaThemePlasma
         run: |
+          set -o pipefail
           nix build --no-link --print-build-logs \
             --override-input nixpkgs "github:NixOS/nixpkgs/$NIXPKGS_REV" \
             .#packages.x86_64-linux.vistathemeplasma \
             .#packages.x86_64-linux.vistathemeplasma-icons \
             .#packages.x86_64-linux.vistathemeplasma-cursors \
-            .#packages.x86_64-linux.vistathemeplasma-sounds
+            .#packages.x86_64-linux.vistathemeplasma-sounds \
+            2>&1 | tee build.log
+
+      - name: Publish build failure summary
+        if: failure()
+        run: |
+          {
+            echo '### Vista build log tail'
+            echo '```'
+            tail -200 build.log || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Create portable binary cache
         run: |
