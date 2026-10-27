@@ -55,6 +55,9 @@ jobs:
             tail -200 build.log || true
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          tail -25 build.log | sed 's/%/%25/g' | sed 's/\r$//' | while IFS= read -r line; do
+            echo "::error::$line"
+          done || true
 
       - name: Create portable binary cache
         run: |
