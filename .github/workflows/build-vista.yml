@@ -37,7 +37,7 @@ jobs:
 
       - name: Build VistaThemePlasma
         run: |
-          nix build --no-link --print-build-logs --print-out-paths \
+          nix build --no-link --print-out-paths \
             --override-input nixpkgs "github:NixOS/nixpkgs/$NIXPKGS_REV" \
             .#packages.x86_64-linux.vistathemeplasma \
             .#packages.x86_64-linux.vistathemeplasma-icons \
@@ -48,8 +48,10 @@ jobs:
       - name: Create portable binary cache
         run: |
           mkdir -p binary-cache
-          xargs -r nix copy --no-recursive --to "file://$PWD/binary-cache" < paths.txt
-          xargs -r nix path-info --json < paths.txt > binary-cache/paths.json
+          grep '^/nix/store/' paths.txt > paths.clean
+          test -s paths.clean
+          xargs -r nix copy --no-recursive --to "file://$PWD/binary-cache" < paths.clean
+          xargs -r nix path-info --json < paths.clean > binary-cache/paths.json
           test -f binary-cache/nix-cache-info
           du -sh binary-cache
 
