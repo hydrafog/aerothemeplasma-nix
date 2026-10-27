@@ -1,7 +1,6 @@
 {
   stdenvNoCC,
   vistathemeplasma-icons-repo,
-  nyakisato,
 }:
 stdenvNoCC.mkDerivation {
   pname = "vistathemeplasma-cursors";
@@ -16,7 +15,4 @@ stdenvNoCC.mkDerivation {
   '';
   dontFixup = true;
 
-  passthru.updateScript = nyakisato {
-    subpaths = [ "vista-aero-drop" ];
-  };
 }

@@ -11,7 +11,6 @@
   libdrm,
   vulkan-headers,
   libepoxy,
-  nyakisato,
 }:
 stdenv.mkDerivation {
   pname = "vistathemeplasma";
@@ -134,16 +133,7 @@ stdenv.mkDerivation {
         --replace-fail '/usr/share/vistathemeplasma' "$out/share/vistathemeplasma" \;
   '';
 
-  passthru = {
-    providedSessions = [ "vistathemeplasma" ];
-    updateScript = nyakisato {
-      subpaths = [
-        "misc"
-        "plasma"
-        "libpositionmanager"
-      ];
-    };
-  };
+  passthru.providedSessions = [ "vistathemeplasma" ];
 
   meta = {
     description = "Windows Vista style shell and theme for KDE Plasma";

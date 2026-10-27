@@ -1,7 +1,6 @@
 {
   stdenvNoCC,
   vistathemeplasma-sounds-repo,
-  nyakisato,
 }:
 stdenvNoCC.mkDerivation {
   pname = "vistathemeplasma-sounds";
@@ -16,12 +15,4 @@ stdenvNoCC.mkDerivation {
   '';
   dontFixup = true;
 
-  passthru.updateScript = nyakisato {
-    subpaths = [
-      "Windows Vista Default"
-      "Windows Vista Glass"
-      "Windows Vista Pearl"
-      "Windows Vista Tinker"
-    ];
-  };
 }

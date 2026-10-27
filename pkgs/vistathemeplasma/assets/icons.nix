@@ -1,7 +1,6 @@
 {
   stdenvNoCC,
   vistathemeplasma-icons-repo,
-  nyakisato,
 }:
 stdenvNoCC.mkDerivation {
   pname = "vistathemeplasma-icons";
@@ -16,7 +15,4 @@ stdenvNoCC.mkDerivation {
   '';
   dontFixup = true;
 
-  passthru.updateScript = nyakisato {
-    subpaths = [ "Windows Vista Aero" ];
-  };
 }
