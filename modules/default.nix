@@ -260,6 +260,7 @@ in
         cfg.vistathemeplasma.cursors.package
         cfg.vistathemeplasma.sounds.package
         (pkg "wmptoolbar")
+        (pkg "libplasma-compat")
         (pkg "aeroshell-vista-session")
         (pkg "vistathemeplasma-x11-session")
       ]
@@ -269,6 +270,14 @@ in
       ++ lib.optionals cfg.aerothemeplasma.sddm.enable [ cfg.aerothemeplasma.sddm.package ]
       ++ lib.optionals config.programs.linver.enable [ config.programs.linver.package ]
       ++ lib.optionals config.programs.execbin.enable [ config.programs.execbin.package ];
+
+    # VTP's C++ plasmoids (notably vistatasks) are built against stock
+    # libplasma, but AeroShell's patched libplasma is what provides the
+    # VTP-specific behaviour.  The compat package provides libPlasma*.so
+    # symlinks to libATPlasma*; put it first in the loader path.
+    environment.sessionVariables = lib.mkIf cfg.vistathemeplasma.enable {
+      LD_LIBRARY_PATH = "${(pkg "libplasma-compat")}/lib";
+    };
 
     # backward compat for users of "programs.aeroshell.fonts.enable"
     programs.aeroshell.fonts = lib.mkIf cfg.fonts.enable {

@@ -154,6 +154,7 @@
             vistathemeplasma-sounds = self.callPackage ./pkgs/vistathemeplasma/assets/sounds.nix {};
             vistathemeplasma-x11-session = self.callPackage ./pkgs/vistathemeplasma/x11-session.nix {};
             wmptoolbar = self.callPackage ./pkgs/vistathemeplasma/wmptoolbar.nix {};
+            libplasma-compat = self.callPackage ./pkgs/vistathemeplasma/libplasma-compat.nix {};
             aeroshell-vista-session = self.callPackage ./pkgs/aeroshell/session/vista.nix {};
 
             segoe-ui = self.callPackage ./pkgs/external/fonts/segoe-ui.nix {};
