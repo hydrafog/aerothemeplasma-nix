@@ -35,18 +35,32 @@ jobs:
             experimental-features = nix-command flakes
             accept-flake-config = true
 
-      - name: Build VistaThemePlasma
+      - name: Build and export VistaThemePlasma
         run: |
-          set -o pipefail
+          set -euo pipefail
           free -h || true
           df -h || true
-          nix build --max-jobs 2 --cores 2 --no-link --print-build-logs \
+          nix build --max-jobs 2 --cores 2 --no-link --print-out-paths \
             --override-input nixpkgs "github:NixOS/nixpkgs/$NIXPKGS_REV" \
             .#packages.x86_64-linux.vistathemeplasma \
             .#packages.x86_64-linux.vistathemeplasma-icons \
             .#packages.x86_64-linux.vistathemeplasma-cursors \
             .#packages.x86_64-linux.vistathemeplasma-sounds \
-            2>&1 | tee build.log
+            > paths.txt 2> build.log
+          mapfile -t paths < paths.txt
+          test "${#paths[@]}" -gt 0
+          nix-store --export "${paths[@]}" > vista-store.export
+          ls -lh vista-store.export
+
+      - name: Upload store export
+        uses: actions/upload-artifact@v7
+        with:
+          name: vista-store
+          path: |
+            vista-store.export
+            paths.txt
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Publish build failure summary
         if: failure()
@@ -63,28 +77,3 @@ jobs:
           tail -15 build.log | sed 's/%/%25/g' | sed 's/\r$//' | while IFS= read -r line; do
             echo "::error::tail: $line"
           done || true
-
-      - name: Create portable store export
-        run: |
-          nix path-info --json \
-            --override-input nixpkgs "github:NixOS/nixpkgs/$NIXPKGS_REV" \
-            .#packages.x86_64-linux.vistathemeplasma \
-            .#packages.x86_64-linux.vistathemeplasma-icons \
-            .#packages.x86_64-linux.vistathemeplasma-cursors \
-            .#packages.x86_64-linux.vistathemeplasma-sounds \
-            > packages.json
-          jq -r '.[].path' packages.json > paths.clean
-          mapfile -t paths < paths.clean
-          test "${#paths[@]}" -gt 0
-          nix-store --export "${paths[@]}" > vista-store.export
-          ls -lh vista-store.export
-
-      - name: Upload store export
-        uses: actions/upload-artifact@v7
-        with:
-          name: vista-store
-          path: |
-            vista-store.export
-            packages.json
-          if-no-files-found: error
-          retention-days: 7
