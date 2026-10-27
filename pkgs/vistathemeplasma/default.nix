@@ -89,7 +89,7 @@ stdenv.mkDerivation {
   # prefix, which does not exist yet while the derivation is being built.
   postPatch = ''
     substituteInPlace plasma/vtpootb/src/CMakeLists.txt \
-      --replace-fail ''${CMAKE_INSTALL_PREFIX}/share/dbus-1/interfaces/org.kde.kwin.Effects.xml \
+      --replace-fail "\''${CMAKE_INSTALL_PREFIX}/share/dbus-1/interfaces/org.kde.kwin.Effects.xml" \
         '${kdePackages.kwin}/share/dbus-1/interfaces/org.kde.kwin.Effects.xml'
 
     # vtpootb opens its bundled assets through this compile-time path.
