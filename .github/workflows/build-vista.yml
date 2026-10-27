@@ -37,21 +37,27 @@ jobs:
 
       - name: Build VistaThemePlasma
         run: |
-          nix build --no-link --print-out-paths \
+          nix build --no-link --print-build-logs \
+            --override-input nixpkgs "github:NixOS/nixpkgs/$NIXPKGS_REV" \
+            .#packages.x86_64-linux.vistathemeplasma \
+            .#packages.x86_64-linux.vistathemeplasma-icons \
+            .#packages.x86_64-linux.vistathemeplasma-cursors \
+            .#packages.x86_64-linux.vistathemeplasma-sounds
+
+      - name: Create portable binary cache
+        run: |
+          mkdir -p binary-cache
+          nix path-info --json \
             --override-input nixpkgs "github:NixOS/nixpkgs/$NIXPKGS_REV" \
             .#packages.x86_64-linux.vistathemeplasma \
             .#packages.x86_64-linux.vistathemeplasma-icons \
             .#packages.x86_64-linux.vistathemeplasma-cursors \
             .#packages.x86_64-linux.vistathemeplasma-sounds \
-            | tee paths.txt
-
-      - name: Create portable binary cache
-        run: |
-          mkdir -p binary-cache
-          grep '^/nix/store/' paths.txt > paths.clean
+            > packages.json
+          jq -r '.[].path' packages.json > paths.clean
           test -s paths.clean
           xargs -r nix copy --no-recursive --to "file://$PWD/binary-cache" < paths.clean
-          xargs -r nix path-info --json < paths.clean > binary-cache/paths.json
+          cp packages.json binary-cache/paths.json
           test -f binary-cache/nix-cache-info
           du -sh binary-cache
 
