@@ -12,7 +12,7 @@ on:
       - ".github/workflows/build-vista.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   # Must match the nixpkgs revision used by the dotfiles that consume this
@@ -61,6 +61,15 @@ jobs:
             paths.txt
           if-no-files-found: error
           retention-days: 7
+
+      - name: Publish public release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete vista-cache --cleanup-tag --yes || true
+          gh release create vista-cache vista-store.export \
+            --title "VistaThemePlasma build cache" \
+            --notes "VistaThemePlasma packages built from ${GITHUB_SHA} with nixpkgs ${NIXPKGS_REV}."
 
       - name: Publish build failure summary
         if: failure()

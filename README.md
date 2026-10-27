@@ -111,18 +111,17 @@ VistaThemePlasma is expensive to compile on low-power machines.  The fork's
 [`build-vista` workflow](.github/workflows/build-vista.yml) builds the VTP
 packages on GitHub Actions and uploads a portable Nix store export.
 
-Download the latest artifact from the repository's **Actions** tab, or with
-GitHub CLI:
+Download the latest export from the public `vista-cache` release:
 
 ```bash
-gh run download --repo hydrafog/aerothemeplasma-nix \
-  --name vista-store -D vista-store
+curl -L -o vista-store.export \
+  https://github.com/hydrafog/aerothemeplasma-nix/releases/download/vista-cache/vista-store.export
 ```
 
 Then import the custom store paths:
 
 ```bash
-sudo nix-store --import < vista-store/vista-store.export
+sudo nix-store --import < vista-store.export
 ```
 
 Your normal `nixos-rebuild switch` will then reuse those paths instead of
