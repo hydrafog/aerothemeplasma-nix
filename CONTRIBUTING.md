@@ -3,22 +3,27 @@ Hello! Some familiarity with Git is assumed, so instead this will be about using
 A NixOS host is not required to contribute. Arch Linux instructions are also available, albeit with a large download as Nix will get its own packages instead of using `pacman`.
 
 ## Requirements
-* Nix package manager or NixOS
-* Up to ~4GB download and ~12GB of storage space at worst
-* 4 CPU cores and 4096MB RAM for the VM, which [can be edited](vms/aerothemeplasma.nix)
-* x86-64 host capable of [mesa hardware acceleration](https://docs.mesa3d.org/faq.html#rendering-is-slow-why-isn-t-my-graphics-hardware-being-used)
-* virt-viewer as the [SPICE](https://spice-space.org) client
+
+- Nix package manager or NixOS
+- Up to ~4GB download and ~12GB of storage space at worst
+- 4 CPU cores and 4096MB RAM for the VM, which [can be edited](vms/aerothemeplasma.nix)
+- x86-64 host capable of [mesa hardware acceleration](https://docs.mesa3d.org/faq.html#rendering-is-slow-why-isn-t-my-graphics-hardware-being-used)
+- virt-viewer as the [SPICE](https://spice-space.org) client
 
 ### Arch Linux host
+
 Install the required packages: `sudo pacman -S --needed nix virt-viewer`
 
 Installing Nix creates a `/nix` folder, which is managed by the Nix daemon. Enable its service with `sudo systemctl enable --now nix-daemon`. Then, for [convenience](https://discourse.nixos.org/t/error-experimental-nix-feature-nix-command-is-disabled/18089), create `~/.config/nix/nix.conf` to enable a couple "experimental features" like so:
+
 ```
 extra-experimental-features = nix-command flakes
 ```
 
 ### NixOS host
+
 Your NixOS configuration should have these options:
+
 ```nix
 {pkgs, ...}:
 {
@@ -28,7 +33,9 @@ Your NixOS configuration should have these options:
 ```
 
 ## Build and run
+
 The command to run the VM differs depending on the host distro. Run one of these in the project folder:
+
 ```
 # on NixOS
 nix run .#nixosConfigurations.atp.config.system.build.vm

@@ -3,7 +3,7 @@
   aerothemeplasma-repo,
   kdePackages,
   pkg-config,
-  cmake
+  cmake,
 }:
 stdenv.mkDerivation {
   pname = "aerothemeplasma-systemtray";
@@ -17,8 +17,15 @@ stdenv.mkDerivation {
       "import org.kde.plasma.core" "import io.gitgud.wackyideas.plasma.core"
   '';
   buildInputs = with kdePackages; [
-    libplasma qtwayland knotifyconfig
-    kitemmodels kstatusnotifieritem
+    libplasma
+    qtwayland
+    knotifyconfig
+    kitemmodels
+    kstatusnotifieritem
   ];
-  nativeBuildInputs = [ cmake pkg-config kdePackages.wrapQtAppsHook ];
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    kdePackages.wrapQtAppsHook
+  ];
 }

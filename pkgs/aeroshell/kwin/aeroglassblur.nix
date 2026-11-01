@@ -7,7 +7,7 @@
   cmake,
   ninja,
   lib,
-  session ? "wayland"
+  session ? "wayland",
 }:
 stdenv.mkDerivation {
   pname = "aeroshell-aeroglassblur-${session}";
@@ -18,11 +18,26 @@ stdenv.mkDerivation {
     substituteInPlace effects_cpp/${session}/kde-effects-aeroglassblur/src/{metadata.json,kcm/CMakeLists.txt} --replace-fail \
       "kwin_aeroglassblur_config" "kwin_aeroglassblur_${session}_config"
   '';
-  buildInputs = [ kdePackages.qttools wayland-protocols ]
-    ++ lib.optionals (session == "x11") [ kdePackages.kwin-x11 ]
-    ++ lib.optionals (session == "wayland") [ kdePackages.kwin ];
-  nativeBuildInputs = [ cmake pkg-config ninja kdePackages.wrapQtAppsHook ];
+  buildInputs = [
+    kdePackages.qttools
+    wayland-protocols
+  ]
+  ++ lib.optionals (session == "x11") [ kdePackages.kwin-x11 ]
+  ++ lib.optionals (session == "wayland") [ kdePackages.kwin ];
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    ninja
+    kdePackages.wrapQtAppsHook
+  ];
   cmakeFlags = [ (lib.cmakeBool "KWIN_BUILD_WAYLAND" (session == "wayland")) ];
   ninjaFlags = [ "aeroglassblur${lib.optionalString (session == "x11") "-x11"}" ];
   installTargets = "effects_cpp/${session}/kde-effects-aeroglassblur/install";
+
+  postInstall = ''
+    configDir="$out/lib/qt-6/plugins/kwin${lib.optionalString (session == "x11") "-x11"}/effects/configs"
+    if [ -d "$configDir" ]; then
+      ln -sf "kwin_aeroglassblur_${session}_config.so" "$configDir/kwin_aeroglassblur_config.so"
+    fi
+  '';
 }

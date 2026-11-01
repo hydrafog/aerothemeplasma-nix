@@ -26,67 +26,68 @@ stdenv.mkDerivation {
     kdePackages.wrapQtAppsHook
   ];
 
-  buildInputs = with kdePackages; [
-    qtbase
-    qtdeclarative
-    qtsvg
-    qtwayland
-    qt5compat
-    qtmultimedia
-    kcoreaddons
-    kconfig
-    ki18n
-    kio
-    kguiaddons
-    kwindowsystem
-    kiconthemes
-    kcmutils
-    kpackage
-    ksvg
-    kdecoration
-    knotifications
-    kservice
-    kxmlgui
-    kjobwidgets
-    kitemviews
-    kstatusnotifieritem
-    kdbusaddons
-    kauth
-    kcrash
-    karchive
-    kcolorscheme
-    knewstuff
-    knotifyconfig
-    attica
-    krunner
-    sonnet
-    kcodecs
-    kitemmodels
-    kglobalaccel
-    plasma5support
-    libplasma
-    plasma-workspace
-    plasma-activities
-    plasma-activities-stats
-    libksysguard
-    kwin
-    layer-shell-qt
-    plasma-wayland-protocols
-    kirigami
-    kirigami-addons
-    qqc2-desktop-style
-    libkscreen
-    kpipewire
-  ] ++ [
-    wayland
-    wayland-protocols
-    libdrm
-    vulkan-headers
-    libepoxy
-  ];
+  buildInputs =
+    with kdePackages;
+    [
+      qtbase
+      qtdeclarative
+      qtsvg
+      qtwayland
+      qt5compat
+      qtmultimedia
+      kcoreaddons
+      kconfig
+      ki18n
+      kio
+      kguiaddons
+      kwindowsystem
+      kiconthemes
+      kcmutils
+      kpackage
+      ksvg
+      kdecoration
+      knotifications
+      kservice
+      kxmlgui
+      kjobwidgets
+      kitemviews
+      kstatusnotifieritem
+      kdbusaddons
+      kauth
+      kcrash
+      karchive
+      kcolorscheme
+      knewstuff
+      knotifyconfig
+      attica
+      krunner
+      sonnet
+      kcodecs
+      kitemmodels
+      kglobalaccel
+      plasma5support
+      libplasma
+      plasma-workspace
+      plasma-activities
+      plasma-activities-stats
+      libksysguard
+      kwin
+      layer-shell-qt
+      plasma-wayland-protocols
+      kirigami
+      kirigami-addons
+      qqc2-desktop-style
+      libkscreen
+      kpipewire
+    ]
+    ++ [
+      wayland
+      wayland-protocols
+      libdrm
+      vulkan-headers
+      libepoxy
+    ];
 
-  # The VTP CMake build expects the KWin effect interface XML at the install
-  # prefix, which does not exist yet while the derivation is being built.
   postPatch = ''
     substituteInPlace plasma/vtpootb/src/CMakeLists.txt \
       --replace-fail "\''${CMAKE_INSTALL_PREFIX}/share/dbus-1/interfaces/org.kde.kwin.Effects.xml" \
@@ -97,9 +98,6 @@ stdenv.mkDerivation {
       --replace-fail '/usr/share/vistathemeplasma' "$out/share/vistathemeplasma"
   '';
 
-  # VTP's 6.7 CMake files link the unqualified `Plasma` library name in a
-  # few plasmoids, so CMake does not propagate libplasma's include directory.
-  # Add it explicitly instead of patching every upstream CMakeLists.
   NIX_CFLAGS_COMPILE = "-I${kdePackages.libplasma.dev}/include/Plasma -I${kdePackages.libplasma.dev}/include/PlasmaQuick";
 
   cmakeFlags = [
@@ -136,6 +134,9 @@ stdenv.mkDerivation {
     find $out/share -name '*.qml' -exec \
       substituteInPlace {} \
         --replace-fail '/usr/share/vistathemeplasma' "$out/share/vistathemeplasma" \;
+
+    substituteInPlace $out/share/plasma/shells/io.gitgud.catpswin56.desktop/contents/configuration/ConfigurationContainmentAppearance.qml \
+      --replace-fail "kwin_aeroglassblur_config.so" 'kwin_aeroglassblur_''${XDG_SESSION_TYPE:-x11}_config.so'
   '';
 
   passthru.providedSessions = [ "vistathemeplasma" ];

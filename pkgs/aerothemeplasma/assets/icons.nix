@@ -1,6 +1,6 @@
 {
   stdenvNoCC,
-  aerothemeplasma-icons-repo
+  aerothemeplasma-icons-repo,
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-icons";

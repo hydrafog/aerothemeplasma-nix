@@ -3,7 +3,7 @@
   aerothemeplasma-repo,
   kdePackages,
   libplasma,
-  cmake
+  cmake,
 }:
 stdenv.mkDerivation {
   pname = "aerothemeplasma-sevenstart";
@@ -19,7 +19,10 @@ stdenv.mkDerivation {
     substituteInPlace src/CMakeLists.txt --replace-fail "/usr/include/Plasma::Plasma" "Plasma"
   '';
   buildInputs = [ libplasma ];
-  nativeBuildInputs = [ cmake kdePackages.wrapQtAppsHook ];
+  nativeBuildInputs = [
+    cmake
+    kdePackages.wrapQtAppsHook
+  ];
   postInstall = ''
     mkdir -p $out/share/plasma/plasmoids
     cp -r $src/plasma/plasmoids/io.gitgud.wackyideas.SevenStart $out/share/plasma/plasmoids

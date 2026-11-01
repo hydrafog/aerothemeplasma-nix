@@ -1,6 +1,6 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-panel";

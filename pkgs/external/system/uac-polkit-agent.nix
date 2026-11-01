@@ -35,7 +35,6 @@ stdenv.mkDerivation {
     kdePackages.wrapQtAppsHook
   ];
 
-  # From: https://github.com/DuCanhGH/snowflakes/blob/766fd883850f1d8592386e3b422fd4ff8778e6b8/modules/nixos/aero/kde/uac-polkit-agent.nix#L4
   postFixup = ''
     rm -rf $out/share/systemd/user/uac-polkit-agent.service
     substituteInPlace $out/etc/systemd/user/plasma-polkit-agent.service.d/uac-polkit-agent.conf \

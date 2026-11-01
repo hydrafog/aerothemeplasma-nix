@@ -1,8 +1,6 @@
 {
   stdenvNoCC,
-  lib,
   aerothemeplasma-repo,
-  atpootb
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-xdg";
@@ -18,7 +16,7 @@ stdenvNoCC.mkDerivation {
     cp $src/misc/branding/kcminfo.png $out/share/aerothemeplasma/branding
     cp $src/misc/xdg/!(autostart|CMakeLists.txt) $out/etc/xdg
     # The one autostart, atpootb, is part of the atpootb package instead.
-    
+
     substituteInPlace $out/etc/xdg/kcm-about-distrorc \
       --replace-fail "/usr/share/aerothemeplasma" "$out/share/aerothemeplasma"
 
@@ -32,7 +30,7 @@ stdenvNoCC.mkDerivation {
     # to be put back so existing installs don't lose the effects.
     chmod +w $out/etc/xdg/kwinrc
     cat >> $out/etc/xdg/kwinrc << EOF
-    
+
     [Plugins]
     aeroglassblurEnabled=true
     aeroglideEnabled=true

@@ -3,7 +3,7 @@
   fetchFromGitLab,
   fetchzip,
   runCommand,
-  diffutils
+  diffutils,
 }:
 let
   patch-source = fetchFromGitLab {
@@ -18,14 +18,14 @@ let
     hash = "sha256-YIFhiymeaYv0cJvM/8eSJw95J0L7nAq2HZou2IscznQ=";
   };
 in
-kdePackages.libplasma.overrideAttrs (oldAttrs: {
+kdePackages.libplasma.overrideAttrs (_oldAttrs: {
   pname = "aeroshell-libplasma";
-  patches = [(
-    runCommand "aeroshell-libplasma-patches" { nativeBuildInputs = [diffutils]; } ''
+  patches = [
+    (runCommand "aeroshell-libplasma-patches" { nativeBuildInputs = [ diffutils ]; } ''
       cd ${patch-source}
       diff -ru ${patch-target}/src ./src > $out || test $? -eq 1
-    ''
-  )];
+    '')
+  ];
   postPatch = ''
     shopt -s globstar
 
@@ -40,6 +40,6 @@ kdePackages.libplasma.overrideAttrs (oldAttrs: {
     substituteInPlace src/declarativeimports/CMakeLists.txt --replace-fail "add_subdirectory(kirigamiplasmastyle)" ""
     substituteInPlace src/plasma/CMakeLists.txt --replace-fail "add_subdirectory(packagestructure)" ""
   '';
-  ninjaFlags = ["corebindingsplugin"];
+  ninjaFlags = [ "corebindingsplugin" ];
   postFixup = "rm -rf $out/share";
 })

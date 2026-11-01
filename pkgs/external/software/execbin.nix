@@ -2,7 +2,7 @@
   stdenv,
   fetchFromGitLab,
   kdePackages,
-  cmake
+  cmake,
 }:
 stdenv.mkDerivation {
   pname = "execbin";
@@ -15,6 +15,13 @@ stdenv.mkDerivation {
     hash = "sha256-7zVfwLVw9DEmVFA8RGZb+1Jt7KF0iJG0dPqvPFZzZN0=";
   };
 
-  buildInputs = with kdePackages; [ extra-cmake-modules qtbase kwindowsystem ];
-  nativeBuildInputs = [ cmake kdePackages.wrapQtAppsHook ];
+  buildInputs = with kdePackages; [
+    extra-cmake-modules
+    qtbase
+    kwindowsystem
+  ];
+  nativeBuildInputs = [
+    cmake
+    kdePackages.wrapQtAppsHook
+  ];
 }

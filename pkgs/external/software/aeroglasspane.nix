@@ -1,6 +1,5 @@
 {
   stdenv,
-  lib,
   fetchFromGitLab,
   kdePackages,
   cmake,
@@ -18,8 +17,14 @@ stdenv.mkDerivation {
     hash = "sha256-Yo3vlrLfnBheHnwGfIBSCfhOOAqZxcAtcpgKC6Zvv0w=";
   };
 
-  buildInputs = [ qt6.qtbase kdePackages.kwindowsystem ];
-  nativeBuildInputs = [ cmake qt6.wrapQtAppsHook ];
+  buildInputs = [
+    qt6.qtbase
+    kdePackages.kwindowsystem
+  ];
+  nativeBuildInputs = [
+    cmake
+    qt6.wrapQtAppsHook
+  ];
 
   meta = {
     mainProgram = "aero-glass-pane";

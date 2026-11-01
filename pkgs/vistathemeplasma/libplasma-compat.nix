@@ -4,7 +4,7 @@
 }:
 stdenvNoCC.mkDerivation {
   pname = "aeroshell-libplasma-compat";
-  version = libplasma.version;
+  inherit (libplasma) version;
 
   dontUnpack = true;
   dontFixup = true;

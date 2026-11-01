@@ -5,7 +5,7 @@
   kdePackages,
   pkg-config,
   cmake,
-  lib
+  lib,
 }:
 stdenv.mkDerivation {
   pname = "aeroshell-smod";
@@ -13,11 +13,22 @@ stdenv.mkDerivation {
   src = aeroshell-smod-repo;
 
   buildInputs = with kdePackages; [
-    extra-cmake-modules qtbase kcoreaddons 
-    kcolorscheme kguiaddons ki18n kiconthemes 
-    kwindowsystem kdecoration kcmutils
+    extra-cmake-modules
+    qtbase
+    kcoreaddons
+    kcolorscheme
+    kguiaddons
+    ki18n
+    kiconthemes
+    kwindowsystem
+    kdecoration
+    kcmutils
   ];
-  nativeBuildInputs = [ cmake pkg-config kdePackages.wrapQtAppsHook ];
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    kdePackages.wrapQtAppsHook
+  ];
   postFixup = "rm -rf $out/share/locale && mkdir -p $out/share && cp -r ${aeroshell-kwin-repo}/smod $out/share";
   cmakeFlags = [ (lib.cmakeBool "BUILD_EFFECT" false) ];
 }

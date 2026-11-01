@@ -3,7 +3,7 @@
   aeroshell-workspace-repo,
   kdePackages,
   cmake,
-  ninja
+  ninja,
 }:
 stdenv.mkDerivation {
   pname = "aeroshell-libtaskmanager";
@@ -12,11 +12,20 @@ stdenv.mkDerivation {
 
   ninjaFlags = [ "taskmanagerplugin" ];
   buildInputs = with kdePackages; [
-    extra-cmake-modules kconfig ki18n
-    kio knotifications kservice kwindowsystem
-    libksysguard plasma-workspace
+    extra-cmake-modules
+    kconfig
+    ki18n
+    kio
+    knotifications
+    kservice
+    kwindowsystem
+    libksysguard
+    plasma-workspace
   ];
-  nativeBuildInputs = [ cmake ninja ];
+  nativeBuildInputs = [
+    cmake
+    ninja
+  ];
   dontWrapQtApps = true;
   installPhase = ''
     runHook preInstall

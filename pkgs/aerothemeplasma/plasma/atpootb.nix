@@ -16,8 +16,14 @@ stdenv.mkDerivation {
       --replace-fail "\''${CMAKE_INSTALL_PREFIX}/share/dbus-1/interfaces/org.kde.kwin.Effects.xml" "${kdePackages.kwin}/share/dbus-1/interfaces/org.kde.kwin.Effects.xml"
   '';
 
-  buildInputs = with kdePackages; [kwin qttools];
-  nativeBuildInputs = [cmake kdePackages.wrapQtAppsHook];
+  buildInputs = with kdePackages; [
+    kwin
+    qttools
+  ];
+  nativeBuildInputs = [
+    cmake
+    kdePackages.wrapQtAppsHook
+  ];
 
   cmakeFlags = [
     "-DKAUTH_ACTIONS_QML=false"

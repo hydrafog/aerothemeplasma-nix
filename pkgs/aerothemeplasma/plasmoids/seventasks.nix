@@ -3,7 +3,7 @@
   aerothemeplasma-repo,
   kdePackages,
   libplasma,
-  cmake
+  cmake,
 }:
 stdenv.mkDerivation {
   pname = "aerothemeplasma-seventasks";
@@ -12,7 +12,10 @@ stdenv.mkDerivation {
 
   preConfigure = "cd plasma/plasmoids/src/seventasks_src";
   buildInputs = [ libplasma ];
-  nativeBuildInputs = [ cmake kdePackages.wrapQtAppsHook ];
+  nativeBuildInputs = [
+    cmake
+    kdePackages.wrapQtAppsHook
+  ];
   postInstall = ''
     mkdir -p $out/share/plasma/plasmoids
     cp -r $src/plasma/plasmoids/io.gitgud.wackyideas.seventasks $out/share/plasma/plasmoids

@@ -1,6 +1,6 @@
 {
   stdenvNoCC,
-  aeroshell-kwin-repo
+  aeroshell-kwin-repo,
 }:
 stdenvNoCC.mkDerivation {
   pname = "aeroshell-squashaero";

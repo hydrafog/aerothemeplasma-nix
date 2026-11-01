@@ -2,7 +2,7 @@
   stdenv,
   aerothemeplasma-repo,
   kdePackages,
-  cmake
+  cmake,
 }:
 stdenv.mkDerivation {
   pname = "aerothemeplasma-desktopcontainment";
@@ -15,12 +15,20 @@ stdenv.mkDerivation {
       "ecm_find_qmlmodule(org.kde.kirigami REQUIRED)" ""
   '';
   buildInputs = with kdePackages; [
-    libplasma kauth kcmutils
-    knewstuff knotifyconfig
-    krunner attica plasma5support
+    libplasma
+    kauth
+    kcmutils
+    knewstuff
+    knotifyconfig
+    krunner
+    attica
+    plasma5support
     plasma-activities-stats
   ];
-  nativeBuildInputs = [ cmake kdePackages.wrapQtAppsHook ];
+  nativeBuildInputs = [
+    cmake
+    kdePackages.wrapQtAppsHook
+  ];
   postInstall = ''
     mkdir -p $out/share/plasma/plasmoids
     cp -r $src/plasma/plasmoids/io.gitgud.wackyideas.desktopcontainment $out/share/plasma/plasmoids

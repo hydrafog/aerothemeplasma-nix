@@ -1,5 +1,4 @@
 name: Build VistaThemePlasma cache
-
 on:
   workflow_dispatch:
   push:
@@ -8,33 +7,29 @@ on:
     paths:
       - "flake.nix"
       - "flake.lock"
+      - "modules/**"
+      - "pkgs/aeroshell/**"
       - "pkgs/vistathemeplasma/**"
       - ".github/workflows/build-vista.yml"
-
 permissions:
   contents: write
-
 env:
   # Must match the nixpkgs revision used by the dotfiles that consume this
   # branch, otherwise the produced store paths cannot be substituted locally.
   NIXPKGS_REV: 304568616a94eee17b5b3343f699db8ea1cfb36f
-
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 360
-
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
             accept-flake-config = true
-
       - name: Build and export VistaThemePlasma
         run: |
           set -euo pipefail
@@ -48,12 +43,16 @@ jobs:
             .#packages.x86_64-linux.vistathemeplasma-sounds \
             .#packages.x86_64-linux.vistathemeplasma-x11-session \
             .#packages.x86_64-linux.wmptoolbar \
+            .#packages.x86_64-linux.aeroglassblur-x11 \
+            .#packages.x86_64-linux.aeroglide-x11 \
+            .#packages.x86_64-linux.launchfeedback-x11 \
+            .#packages.x86_64-linux.smodglow-x11 \
+            .#packages.x86_64-linux.smodsnap-x11 \
             > paths.txt 2> build.log
           mapfile -t paths < paths.txt
           test "${#paths[@]}" -gt 0
           nix-store --export "${paths[@]}" > vista-store.export
           ls -lh vista-store.export
-
       - name: Upload store export
         uses: actions/upload-artifact@v7
         with:
@@ -63,7 +62,6 @@ jobs:
             paths.txt
           if-no-files-found: error
           retention-days: 7
-
       - name: Publish public release asset
         env:
           GH_TOKEN: ${{ github.token }}
@@ -72,7 +70,6 @@ jobs:
           gh release create vista-cache vista-store.export \
             --title "VistaThemePlasma build cache" \
             --notes "VistaThemePlasma packages built from ${GITHUB_SHA} with nixpkgs ${NIXPKGS_REV}."
-
       - name: Publish build failure summary
         if: failure()
         run: |

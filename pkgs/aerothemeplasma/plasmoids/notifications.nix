@@ -3,7 +3,7 @@
   aerothemeplasma-repo,
   kdePackages,
   pkg-config,
-  cmake
+  cmake,
 }:
 stdenv.mkDerivation {
   pname = "aerothemeplasma-notifications";
@@ -15,5 +15,9 @@ stdenv.mkDerivation {
     plasma-workspace
     knotifyconfig
   ];
-  nativeBuildInputs = [ cmake pkg-config kdePackages.wrapQtAppsHook ];
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    kdePackages.wrapQtAppsHook
+  ];
 }

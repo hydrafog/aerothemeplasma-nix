@@ -1,6 +1,6 @@
 {
   stdenvNoCC,
-  aerothemeplasma-repo
+  aerothemeplasma-repo,
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-shell";
@@ -13,10 +13,10 @@ stdenvNoCC.mkDerivation {
 
     mkdir -p $out/share/plasma/shells
     cp -r $src/plasma/shells/io.gitgud.wackyideas.desktop $out/share/plasma/shells
-    
+
     substituteInPlace $out/share/plasma/shells/io.gitgud.wackyideas.desktop/contents/configuration/ConfigurationContainmentAppearance.qml \
       --replace-fail "kwin_aeroglassblur_config.so" 'kwin_aeroglassblur_''${XDG_SESSION_TYPE}_config.so'
-    
+
     runHook postInstall
   '';
 }

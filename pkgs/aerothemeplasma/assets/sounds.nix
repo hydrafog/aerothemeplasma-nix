@@ -1,6 +1,6 @@
 {
   stdenvNoCC,
-  fetchFromGitLab
+  fetchFromGitLab,
 }:
 stdenvNoCC.mkDerivation {
   pname = "aerothemeplasma-sounds";
@@ -13,7 +13,6 @@ stdenvNoCC.mkDerivation {
     hash = "sha256-nGZtC0cC0hBWIX0zkwsdQ4klGhCy6KuEajvxtKH7Q0Q=";
   };
 
-  # not using upstream's CMakeLists here because.. it's just files
   installPhase = ''
     runHook preInstall
     mkdir -p $out/share/sounds

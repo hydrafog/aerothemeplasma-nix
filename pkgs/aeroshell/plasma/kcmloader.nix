@@ -3,7 +3,7 @@
   aeroshell-workspace-repo,
   kdePackages,
   pkg-config,
-  cmake
+  cmake,
 }:
 stdenv.mkDerivation {
   pname = "aeroshell-kcmloader";
@@ -12,5 +12,9 @@ stdenv.mkDerivation {
 
   preConfigure = "cd aeroshell-kcmloader";
   buildInputs = with kdePackages; [ kcmutils ];
-  nativeBuildInputs = [ cmake pkg-config kdePackages.wrapQtAppsHook ];
+  nativeBuildInputs = [
+    cmake
+    pkg-config
+    kdePackages.wrapQtAppsHook
+  ];
 }

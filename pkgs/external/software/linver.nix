@@ -3,7 +3,7 @@
   lib,
   fetchFromGitLab,
   qt6,
-  lsb-release
+  lsb-release,
 }:
 stdenv.mkDerivation {
   pname = "linver";
@@ -18,9 +18,12 @@ stdenv.mkDerivation {
   };
 
   buildInputs = [ qt6.qtbase ];
-  nativeBuildInputs = [ qt6.wrapQtAppsHook qt6.qmake ];
+  nativeBuildInputs = [
+    qt6.wrapQtAppsHook
+    qt6.qmake
+  ];
   qmakeFlags = [ "linver.pro" ];
 
   postPatch = "substituteInPlace linver.pro --replace-fail 'target.path = /usr/bin' \"target.path = $out/bin\"";
-  qtWrapperArgs = [ "--prefix PATH : ${lib.makeBinPath [lsb-release]}" ];
+  qtWrapperArgs = [ "--prefix PATH : ${lib.makeBinPath [ lsb-release ]}" ];
 }

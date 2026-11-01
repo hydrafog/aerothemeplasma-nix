@@ -6,168 +6,174 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } ({ self, withSystem, moduleWithSystem, ... }: {
-      systems = [ "x86_64-linux" "aarch64-linux" "i686-linux" ];
-
-      flake.nixosModules.aerothemeplasma-nix = moduleWithSystem (
-        perSystem@{ config }: import ./modules/default.nix perSystem
-      );
-
-      # This configuration is intended for testing,
-      # please do not try to switch to it!
-      flake.nixosConfigurations.atp = inputs.nixpkgs.lib.nixosSystem {
-        modules = [
-          self.nixosModules.aerothemeplasma-nix
-          ./vms/aerothemeplasma.nix
+  outputs =
+    inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } (
+      { self, moduleWithSystem, ... }: {
+        systems = [
+          "x86_64-linux"
+          "aarch64-linux"
+          "i686-linux"
         ];
-      };
 
-      perSystem = { pkgs, system, ... }: {
-        packages = pkgs.lib.filterAttrs (_: pkgs.lib.isDerivation) (
-          pkgs.lib.makeScope pkgs.newScope (self: {
-            aeroshell-kwin-repo = pkgs.fetchFromGitLab {
-              domain = "gitgud.io";
-              owner = "aeroshell";
-              repo = "aeroshell-kwin-components";
-              rev = "ba5b59a4b5270a71a17768e0e7a22dc1be926833";
-              hash = "sha256-w+C0bNbf23GIyDcAtjqfDsRXI1dTx2KqU7x+6/cG4rE=";
-            };
-            aeroshell-smod-repo = pkgs.fetchFromGitLab {
-              domain = "gitgud.io";
-              owner = "aeroshell";
-              repo = "smod";
-              rev = "b93cffd1d06a34cb89223270fc6256d1ba557e22";
-              hash = "sha256-LB5uKwxmQHctZJHixhlcpg9Mp+SztnYPnuRX0l+9xoM=";
-            };
-            aeroshell-workspace-repo = pkgs.fetchFromGitLab {
-              domain = "gitgud.io";
-              owner = "aeroshell";
-              repo = "aeroshell-workspace";
-              rev = "00a39ba08f3b9441b0883f1b82fc4e7e9e6a44b7";
-              hash = "sha256-UGT+MaFwSgLzacdwZTLhaxW5qhaSVa6ZFE6F4XCaHbE=";
-            };
-            aerothemeplasma-icons-repo = pkgs.fetchFromGitLab {
-              domain = "gitgud.io";
-              owner = "aeroshell";
-              repo = "atp/aerothemeplasma-icons";
-              rev = "0100536bb0fb4b731b6cf776f3bc6dc5d3c74bfc";
-              hash = "sha256-5tB52/IYB4oz3Zn3TPcSWLfdCLvYLRqxshbGzZyPHzE=";
-            };
-            aerothemeplasma-repo = pkgs.fetchFromGitLab {
-              domain = "gitgud.io";
-              owner = "aeroshell";
-              repo = "atp/aerothemeplasma";
-              rev = "f724417af98ad75e8e001ae1711068e297904d4f";
-              hash = "sha256-Jq7aQ3S11edx/CJC3qJOchTDeWepI2XGpZ5/+FmaGy8=";
-            };
-
-            # VistaThemePlasma shares AeroShell's library components, but keeps
-            # its own shell, plasmoids, and assets.  This is the Plasma/6.7
-            # branch, which matches the Plasma version in nixpkgs at the time
-            # of writing.
-            vistathemeplasma-repo = pkgs.fetchFromGitHub {
-              owner = "aeroshell-desktop";
-              repo = "vistathemeplasma";
-              rev = "209081cbd4a6d978a901e2f85812efd9400540e7";
-              hash = "sha256-Jgx5l2vbVChVyx4YGdtGDwZYLuzCP6vYHX62KTRRGKM=";
-            };
-            vistathemeplasma-icons-repo = pkgs.fetchFromGitLab {
-              domain = "gitgud.io";
-              owner = "aeroshell";
-              repo = "vtp/vistathemeplasma-icons";
-              rev = "643c34b0b2afbf84689277700d05950ee415bd9e";
-              hash = "sha256-QgWWdfxi5EUrLOJGumeCIgxhShG9/Zadu7Zk8iukjXk=";
-            };
-            vistathemeplasma-sounds-repo = pkgs.fetchFromGitLab {
-              domain = "gitgud.io";
-              owner = "aeroshell";
-              repo = "vtp/vistathemeplasma-sounds";
-              rev = "dabc6bfcbc3a0b092f9317861e4fd10d53c986ce";
-              hash = "sha256-2FdRBQt4Rnhu4jQhqV1mPWDGKRYregdjoAfjwvMFn5g=";
-            };
-            wmp-toolbar-repo = pkgs.fetchFromGitLab {
-              domain = "gitgud.io";
-              owner = "catpswin56";
-              repo = "wmp-toolbar-plasmoid";
-              rev = "b452aca090af4e9c5413c1476fd87ee4ae722c33";
-              hash = "sha256-bB2Du4EzBIyogs1/X/y2j8SB3tVQtW50aw2tiW04HYA=";
-            };
-            
-            libplasma = self.callPackage ./pkgs/aeroshell/hacks/libplasma.nix {};
-            plasma-workspace = self.callPackage ./pkgs/aeroshell/hacks/plasma-workspace.nix {};
-
-            aeroglassblur = self.callPackage ./pkgs/aeroshell/kwin/aeroglassblur.nix {};
-            aeroglide = self.callPackage ./pkgs/aeroshell/kwin/aeroglide.nix {};
-            dimscreenaero = self.callPackage ./pkgs/aeroshell/kwin/dimscreenaero.nix {};
-            fadingpopupsaero = self.callPackage ./pkgs/aeroshell/kwin/fadingpopupsaero.nix {};
-            flip3d = self.callPackage ./pkgs/aeroshell/kwin/flip3d.nix {};
-            launchfeedback = self.callPackage ./pkgs/aeroshell/kwin/launchfeedback.nix {};
-            loginaero = self.callPackage ./pkgs/aeroshell/kwin/loginaero.nix {};
-            kwin-shared-data = self.callPackage ./pkgs/aeroshell/kwin/shared-data.nix {};
-            smod = self.callPackage ./pkgs/aeroshell/kwin/smod.nix {};
-            smodglow = self.callPackage ./pkgs/aeroshell/kwin/smodglow.nix {};
-            smodsnap = self.callPackage ./pkgs/aeroshell/kwin/smodsnap.nix {};
-            smodpeekeffect = self.callPackage ./pkgs/aeroshell/kwin/smodpeekeffect.nix {};
-            smodpeekscript = self.callPackage ./pkgs/aeroshell/kwin/smodpeekscript.nix {};
-            squashaero = self.callPackage ./pkgs/aeroshell/kwin/squashaero.nix {};
-            thumbnail-aero = self.callPackage ./pkgs/aeroshell/kwin/thumbnail-aero.nix {};
-            thumbnails = self.callPackage ./pkgs/aeroshell/kwin/thumbnails.nix {};
-
-            kcmloader = self.callPackage ./pkgs/aeroshell/plasma/kcmloader.nix {};
-            libaeroshellutils = self.callPackage ./pkgs/aeroshell/plasma/libaeroshellutils.nix {};
-            libshowdesktop = self.callPackage ./pkgs/aeroshell/plasma/libshowdesktop.nix {};
-            libtaskmanager = self.callPackage ./pkgs/aeroshell/plasma/libtaskmanager.nix {};
-
-            cursors = self.callPackage ./pkgs/aerothemeplasma/assets/cursors.nix {};
-            icons = self.callPackage ./pkgs/aerothemeplasma/assets/icons.nix {};
-            sounds = self.callPackage ./pkgs/aerothemeplasma/assets/sounds.nix {};
-
-            atpootb = self.callPackage ./pkgs/aerothemeplasma/plasma/atpootb.nix {};
-            authui7 = self.callPackage ./pkgs/aerothemeplasma/plasma/authui7.nix {};
-            color-scheme = self.callPackage ./pkgs/aerothemeplasma/plasma/color-scheme.nix {};
-            kvantum-windows7aero = self.callPackage ./pkgs/aerothemeplasma/plasma/kvantum-windows7aero.nix {};
-            layout-template = self.callPackage ./pkgs/aerothemeplasma/plasma/layout-template.nix {};
-            seven-black = self.callPackage ./pkgs/aerothemeplasma/plasma/seven-black.nix {};
-            shell = self.callPackage ./pkgs/aerothemeplasma/plasma/shell.nix {};
-            xdg = self.callPackage ./pkgs/aerothemeplasma/plasma/xdg.nix {};
-
-            battery = self.callPackage ./pkgs/aerothemeplasma/plasmoids/battery.nix {};
-            desktopcontainment = self.callPackage ./pkgs/aerothemeplasma/plasmoids/desktopcontainment.nix {};
-            digitalclocklite = self.callPackage ./pkgs/aerothemeplasma/plasmoids/digitalclocklite.nix {};
-            keyboardlayout = self.callPackage ./pkgs/aerothemeplasma/plasmoids/keyboardlayout.nix {};
-            networkmanagement = self.callPackage ./pkgs/aerothemeplasma/plasmoids/networkmanagement.nix {};
-            notifications = self.callPackage ./pkgs/aerothemeplasma/plasmoids/notifications.nix {};
-            panel = self.callPackage ./pkgs/aerothemeplasma/plasmoids/panel.nix {};
-            sevenstart = self.callPackage ./pkgs/aerothemeplasma/plasmoids/sevenstart.nix {};
-            seventasks = self.callPackage ./pkgs/aerothemeplasma/plasmoids/seventasks.nix {};
-            systemtray = self.callPackage ./pkgs/aerothemeplasma/plasmoids/systemtray.nix {};
-            volume = self.callPackage ./pkgs/aerothemeplasma/plasmoids/volume.nix {};
-            win7showdesktop = self.callPackage ./pkgs/aerothemeplasma/plasmoids/win7showdesktop.nix {};
-
-            login-session = self.callPackage ./pkgs/aerothemeplasma/system/login-session.nix {};
-            sddm-theme-mod = self.callPackage ./pkgs/aerothemeplasma/system/sddm-theme-mod.nix {};
-
-            vistathemeplasma = self.callPackage ./pkgs/vistathemeplasma/default.nix {};
-            vistathemeplasma-icons = self.callPackage ./pkgs/vistathemeplasma/assets/icons.nix {};
-            vistathemeplasma-cursors = self.callPackage ./pkgs/vistathemeplasma/assets/cursors.nix {};
-            vistathemeplasma-sounds = self.callPackage ./pkgs/vistathemeplasma/assets/sounds.nix {};
-            vistathemeplasma-x11-session = self.callPackage ./pkgs/vistathemeplasma/x11-session.nix {};
-            wmptoolbar = self.callPackage ./pkgs/vistathemeplasma/wmptoolbar.nix {};
-            libplasma-compat = self.callPackage ./pkgs/vistathemeplasma/libplasma-compat.nix {};
-            aeroshell-vista-session = self.callPackage ./pkgs/aeroshell/session/vista.nix {};
-
-            segoe-ui = self.callPackage ./pkgs/external/fonts/segoe-ui.nix {};
-            lucida-console = self.callPackage ./pkgs/external/fonts/lucida-console.nix {};
-
-            aeroglasspane = self.callPackage ./pkgs/external/software/aeroglasspane.nix {};
-            execbin = self.callPackage ./pkgs/external/software/execbin.nix {};
-            linver = self.callPackage ./pkgs/external/software/linver.nix {};
-
-            plymouthvista = self.callPackage ./pkgs/external/system/plymouthvista.nix {};
-            uac-polkit-agent = self.callPackage ./pkgs/external/system/uac-polkit-agent.nix {};
-          })
+        flake.nixosModules.aerothemeplasma-nix = moduleWithSystem (
+          perSystem@{ }: import ./modules/default.nix perSystem
         );
-      };
-    });
+
+        flake.nixosConfigurations.atp = inputs.nixpkgs.lib.nixosSystem {
+          modules = [
+            self.nixosModules.aerothemeplasma-nix
+            ./vms/aerothemeplasma.nix
+          ];
+        };
+
+        perSystem = { pkgs, ... }: {
+          packages = pkgs.lib.filterAttrs (_: pkgs.lib.isDerivation) (
+            pkgs.lib.makeScope pkgs.newScope (self: {
+              aeroshell-kwin-repo = pkgs.fetchFromGitLab {
+                domain = "gitgud.io";
+                owner = "aeroshell";
+                repo = "aeroshell-kwin-components";
+                rev = "ba5b59a4b5270a71a17768e0e7a22dc1be926833";
+                hash = "sha256-w+C0bNbf23GIyDcAtjqfDsRXI1dTx2KqU7x+6/cG4rE=";
+              };
+              aeroshell-smod-repo = pkgs.fetchFromGitLab {
+                domain = "gitgud.io";
+                owner = "aeroshell";
+                repo = "smod";
+                rev = "b93cffd1d06a34cb89223270fc6256d1ba557e22";
+                hash = "sha256-LB5uKwxmQHctZJHixhlcpg9Mp+SztnYPnuRX0l+9xoM=";
+              };
+              aeroshell-workspace-repo = pkgs.fetchFromGitLab {
+                domain = "gitgud.io";
+                owner = "aeroshell";
+                repo = "aeroshell-workspace";
+                rev = "00a39ba08f3b9441b0883f1b82fc4e7e9e6a44b7";
+                hash = "sha256-UGT+MaFwSgLzacdwZTLhaxW5qhaSVa6ZFE6F4XCaHbE=";
+              };
+              aerothemeplasma-icons-repo = pkgs.fetchFromGitLab {
+                domain = "gitgud.io";
+                owner = "aeroshell";
+                repo = "atp/aerothemeplasma-icons";
+                rev = "0100536bb0fb4b731b6cf776f3bc6dc5d3c74bfc";
+                hash = "sha256-5tB52/IYB4oz3Zn3TPcSWLfdCLvYLRqxshbGzZyPHzE=";
+              };
+              aerothemeplasma-repo = pkgs.fetchFromGitLab {
+                domain = "gitgud.io";
+                owner = "aeroshell";
+                repo = "atp/aerothemeplasma";
+                rev = "f724417af98ad75e8e001ae1711068e297904d4f";
+                hash = "sha256-Jq7aQ3S11edx/CJC3qJOchTDeWepI2XGpZ5/+FmaGy8=";
+              };
+
+              vistathemeplasma-repo = pkgs.fetchFromGitHub {
+                owner = "aeroshell-desktop";
+                repo = "vistathemeplasma";
+                rev = "209081cbd4a6d978a901e2f85812efd9400540e7";
+                hash = "sha256-Jgx5l2vbVChVyx4YGdtGDwZYLuzCP6vYHX62KTRRGKM=";
+              };
+              vistathemeplasma-icons-repo = pkgs.fetchFromGitLab {
+                domain = "gitgud.io";
+                owner = "aeroshell";
+                repo = "vtp/vistathemeplasma-icons";
+                rev = "643c34b0b2afbf84689277700d05950ee415bd9e";
+                hash = "sha256-QgWWdfxi5EUrLOJGumeCIgxhShG9/Zadu7Zk8iukjXk=";
+              };
+              vistathemeplasma-sounds-repo = pkgs.fetchFromGitLab {
+                domain = "gitgud.io";
+                owner = "aeroshell";
+                repo = "vtp/vistathemeplasma-sounds";
+                rev = "dabc6bfcbc3a0b092f9317861e4fd10d53c986ce";
+                hash = "sha256-2FdRBQt4Rnhu4jQhqV1mPWDGKRYregdjoAfjwvMFn5g=";
+              };
+              wmp-toolbar-repo = pkgs.fetchFromGitLab {
+                domain = "gitgud.io";
+                owner = "catpswin56";
+                repo = "wmp-toolbar-plasmoid";
+                rev = "b452aca090af4e9c5413c1476fd87ee4ae722c33";
+                hash = "sha256-bB2Du4EzBIyogs1/X/y2j8SB3tVQtW50aw2tiW04HYA=";
+              };
+
+              libplasma = self.callPackage ./pkgs/aeroshell/hacks/libplasma.nix { };
+              plasma-workspace = self.callPackage ./pkgs/aeroshell/hacks/plasma-workspace.nix { };
+
+              aeroglassblur = self.callPackage ./pkgs/aeroshell/kwin/aeroglassblur.nix { };
+              aeroglassblur-x11 = self.callPackage ./pkgs/aeroshell/kwin/aeroglassblur.nix { session = "x11"; };
+              aeroglide = self.callPackage ./pkgs/aeroshell/kwin/aeroglide.nix { };
+              aeroglide-x11 = self.callPackage ./pkgs/aeroshell/kwin/aeroglide.nix { session = "x11"; };
+              dimscreenaero = self.callPackage ./pkgs/aeroshell/kwin/dimscreenaero.nix { };
+              fadingpopupsaero = self.callPackage ./pkgs/aeroshell/kwin/fadingpopupsaero.nix { };
+              flip3d = self.callPackage ./pkgs/aeroshell/kwin/flip3d.nix { };
+              launchfeedback = self.callPackage ./pkgs/aeroshell/kwin/launchfeedback.nix { };
+              launchfeedback-x11 = self.callPackage ./pkgs/aeroshell/kwin/launchfeedback.nix { session = "x11"; };
+              loginaero = self.callPackage ./pkgs/aeroshell/kwin/loginaero.nix { };
+              kwin-shared-data = self.callPackage ./pkgs/aeroshell/kwin/shared-data.nix { };
+              smod = self.callPackage ./pkgs/aeroshell/kwin/smod.nix { };
+              smodglow = self.callPackage ./pkgs/aeroshell/kwin/smodglow.nix { };
+              smodglow-x11 = self.callPackage ./pkgs/aeroshell/kwin/smodglow.nix { session = "x11"; };
+              smodsnap = self.callPackage ./pkgs/aeroshell/kwin/smodsnap.nix { };
+              smodsnap-x11 = self.callPackage ./pkgs/aeroshell/kwin/smodsnap.nix { session = "x11"; };
+              smodpeekeffect = self.callPackage ./pkgs/aeroshell/kwin/smodpeekeffect.nix { };
+              smodpeekscript = self.callPackage ./pkgs/aeroshell/kwin/smodpeekscript.nix { };
+              squashaero = self.callPackage ./pkgs/aeroshell/kwin/squashaero.nix { };
+              thumbnail-aero = self.callPackage ./pkgs/aeroshell/kwin/thumbnail-aero.nix { };
+              thumbnails = self.callPackage ./pkgs/aeroshell/kwin/thumbnails.nix { };
+
+              kcmloader = self.callPackage ./pkgs/aeroshell/plasma/kcmloader.nix { };
+              libaeroshellutils = self.callPackage ./pkgs/aeroshell/plasma/libaeroshellutils.nix { };
+              libshowdesktop = self.callPackage ./pkgs/aeroshell/plasma/libshowdesktop.nix { };
+              libtaskmanager = self.callPackage ./pkgs/aeroshell/plasma/libtaskmanager.nix { };
+
+              cursors = self.callPackage ./pkgs/aerothemeplasma/assets/cursors.nix { };
+              icons = self.callPackage ./pkgs/aerothemeplasma/assets/icons.nix { };
+              sounds = self.callPackage ./pkgs/aerothemeplasma/assets/sounds.nix { };
+
+              atpootb = self.callPackage ./pkgs/aerothemeplasma/plasma/atpootb.nix { };
+              authui7 = self.callPackage ./pkgs/aerothemeplasma/plasma/authui7.nix { };
+              color-scheme = self.callPackage ./pkgs/aerothemeplasma/plasma/color-scheme.nix { };
+              kvantum-windows7aero = self.callPackage ./pkgs/aerothemeplasma/plasma/kvantum-windows7aero.nix { };
+              layout-template = self.callPackage ./pkgs/aerothemeplasma/plasma/layout-template.nix { };
+              seven-black = self.callPackage ./pkgs/aerothemeplasma/plasma/seven-black.nix { };
+              shell = self.callPackage ./pkgs/aerothemeplasma/plasma/shell.nix { };
+              xdg = self.callPackage ./pkgs/aerothemeplasma/plasma/xdg.nix { };
+
+              battery = self.callPackage ./pkgs/aerothemeplasma/plasmoids/battery.nix { };
+              desktopcontainment = self.callPackage ./pkgs/aerothemeplasma/plasmoids/desktopcontainment.nix { };
+              digitalclocklite = self.callPackage ./pkgs/aerothemeplasma/plasmoids/digitalclocklite.nix { };
+              keyboardlayout = self.callPackage ./pkgs/aerothemeplasma/plasmoids/keyboardlayout.nix { };
+              networkmanagement = self.callPackage ./pkgs/aerothemeplasma/plasmoids/networkmanagement.nix { };
+              notifications = self.callPackage ./pkgs/aerothemeplasma/plasmoids/notifications.nix { };
+              panel = self.callPackage ./pkgs/aerothemeplasma/plasmoids/panel.nix { };
+              sevenstart = self.callPackage ./pkgs/aerothemeplasma/plasmoids/sevenstart.nix { };
+              seventasks = self.callPackage ./pkgs/aerothemeplasma/plasmoids/seventasks.nix { };
+              systemtray = self.callPackage ./pkgs/aerothemeplasma/plasmoids/systemtray.nix { };
+              volume = self.callPackage ./pkgs/aerothemeplasma/plasmoids/volume.nix { };
+              win7showdesktop = self.callPackage ./pkgs/aerothemeplasma/plasmoids/win7showdesktop.nix { };
+
+              login-session = self.callPackage ./pkgs/aerothemeplasma/system/login-session.nix { };
+              sddm-theme-mod = self.callPackage ./pkgs/aerothemeplasma/system/sddm-theme-mod.nix { };
+
+              vistathemeplasma = self.callPackage ./pkgs/vistathemeplasma/default.nix { };
+              vistathemeplasma-icons = self.callPackage ./pkgs/vistathemeplasma/assets/icons.nix { };
+              vistathemeplasma-cursors = self.callPackage ./pkgs/vistathemeplasma/assets/cursors.nix { };
+              vistathemeplasma-sounds = self.callPackage ./pkgs/vistathemeplasma/assets/sounds.nix { };
+              vistathemeplasma-x11-session = self.callPackage ./pkgs/vistathemeplasma/x11-session.nix { };
+              wmptoolbar = self.callPackage ./pkgs/vistathemeplasma/wmptoolbar.nix { };
+              libplasma-compat = self.callPackage ./pkgs/vistathemeplasma/libplasma-compat.nix { };
+              aeroshell-vista-session = self.callPackage ./pkgs/aeroshell/session/vista.nix { };
+
+              segoe-ui = self.callPackage ./pkgs/external/fonts/segoe-ui.nix { };
+              lucida-console = self.callPackage ./pkgs/external/fonts/lucida-console.nix { };
+
+              aeroglasspane = self.callPackage ./pkgs/external/software/aeroglasspane.nix { };
+              execbin = self.callPackage ./pkgs/external/software/execbin.nix { };
+              linver = self.callPackage ./pkgs/external/software/linver.nix { };
+
+              plymouthvista = self.callPackage ./pkgs/external/system/plymouthvista.nix { };
+              uac-polkit-agent = self.callPackage ./pkgs/external/system/uac-polkit-agent.nix { };
+            })
+          );
+        };
+      }
+    );
 }

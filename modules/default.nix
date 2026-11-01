@@ -1,12 +1,14 @@
 perSystem:
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   cfg = config.programs.aeroshell;
   atpkgs = perSystem.config.packages;
 
-  # Every package the module installs can be overridden through
-  # `programs.aeroshell.packages.<name>`.  The defaults come from this flake's
-  # package set.
   pkg = name: cfg.packages.${name} or atpkgs.${name};
 
   pvcfg =
@@ -25,6 +27,12 @@ in
   options.programs = {
     aeroshell = rec {
       enable = lib.mkEnableOption "AeroShell";
+
+      session = lib.mkOption {
+        type = lib.types.enum [ "wayland" "x11" ];
+        default = if cfg.vistathemeplasma.enable then "x11" else "wayland";
+        description = "The display server session to install KWin effects for.";
+      };
 
       packages = lib.mkOption {
         type = lib.types.attrsOf lib.types.package;
@@ -84,9 +92,14 @@ in
           };
           settings = lib.mkOption {
             description = "Settings for the PlymouthVista theme. See [PlymouthVista's CONFIG.md](https://github.com/furkrn/PlymouthVista/blob/main/CONFIG.md#keys) for a full list, ones related to services are unsupported (except BootSlowdown).";
-            # "Why are they unsupported anyways?" Because they edit the Plymouth script at runtime, and since it is in the Nix store that's not happening. Maybe there is a hacky solution, but for now, ehh..
             type = lib.types.submodule {
-              freeformType = with lib.types; attrsOf (oneOf [ str bool int ]);
+              freeformType =
+                with lib.types;
+                attrsOf (oneOf [
+                  str
+                  bool
+                  int
+                ]);
               options.BootSlowdown = lib.mkOption {
                 type = lib.types.int;
                 default = 0;
@@ -200,86 +213,93 @@ in
         (pkg "vistathemeplasma-x11-session")
       ];
 
-    environment.systemPackages =
-      [
-        pkgs.kdePackages.qtmultimedia
-        (pkg "libplasma")
-        (pkg "plasma-workspace")
-      ]
-      ++ map pkg [
-        "dimscreenaero"
-        "fadingpopupsaero"
-        "flip3d"
-        "loginaero"
-        "smod"
-        "smodpeekeffect"
-        "kwin-shared-data"
-        "smodpeekscript"
-        "squashaero"
-        "thumbnail-aero"
-        "thumbnails"
-        "kcmloader"
-        "libaeroshellutils"
-        "libshowdesktop"
-        "libtaskmanager"
-        "aeroglassblur"
-        "aeroglide"
-        "launchfeedback"
-        "smodglow"
-        "smodsnap"
-      ]
-      ++ lib.optionals cfg.aerothemeplasma.enable (
-        map pkg [
-          "cursors"
-          "icons"
-          "sounds"
-          "atpootb"
-          "authui7"
-          "color-scheme"
-          "kvantum-windows7aero"
-          "layout-template"
-          "seven-black"
-          "shell"
-          "battery"
-          "desktopcontainment"
-          "digitalclocklite"
-          "keyboardlayout"
-          "networkmanagement"
-          "notifications"
-          "panel"
-          "sevenstart"
-          "seventasks"
-          "systemtray"
-          "volume"
-          "win7showdesktop"
+    environment.systemPackages = [
+      pkgs.kdePackages.qtmultimedia
+      (pkg "libplasma")
+      (pkg "plasma-workspace")
+    ]
+    ++ map pkg [
+      "dimscreenaero"
+      "fadingpopupsaero"
+      "flip3d"
+      "loginaero"
+      "smod"
+      "smodpeekeffect"
+      "kwin-shared-data"
+      "smodpeekscript"
+      "squashaero"
+      "thumbnail-aero"
+      "thumbnails"
+      "kcmloader"
+      "libaeroshellutils"
+      "libshowdesktop"
+      "libtaskmanager"
+    ]
+    ++ (
+      if cfg.session == "x11" then
+        map (name: cfg.packages.${name} or (atpkgs."${name}-x11" or (atpkgs.${name}.override { session = "x11"; }))) [
+          "aeroglassblur"
+          "aeroglide"
+          "launchfeedback"
+          "smodglow"
+          "smodsnap"
         ]
-      )
-      ++ lib.optionals cfg.vistathemeplasma.enable [
-        cfg.vistathemeplasma.package
-        cfg.vistathemeplasma.icons.package
-        cfg.vistathemeplasma.cursors.package
-        cfg.vistathemeplasma.sounds.package
-        (pkg "wmptoolbar")
-        (pkg "libplasma-compat")
-        (pkg "aeroshell-vista-session")
-        (pkg "vistathemeplasma-x11-session")
+      else
+        map pkg [
+          "aeroglassblur"
+          "aeroglide"
+          "launchfeedback"
+          "smodglow"
+          "smodsnap"
+        ]
+    )
+    ++ lib.optionals cfg.aerothemeplasma.enable (
+      map pkg [
+        "cursors"
+        "icons"
+        "sounds"
+        "atpootb"
+        "authui7"
+        "color-scheme"
+        "kvantum-windows7aero"
+        "layout-template"
+        "seven-black"
+        "shell"
+        "battery"
+        "desktopcontainment"
+        "digitalclocklite"
+        "keyboardlayout"
+        "networkmanagement"
+        "notifications"
+        "panel"
+        "sevenstart"
+        "seventasks"
+        "systemtray"
+        "volume"
+        "win7showdesktop"
       ]
-      ++ lib.optionals (cfg.aerothemeplasma.enable || cfg.vistathemeplasma.enable) [
-        pkgs.kdePackages.qtstyleplugin-kvantum
-      ]
-      ++ lib.optionals cfg.aerothemeplasma.sddm.enable [ cfg.aerothemeplasma.sddm.package ]
-      ++ lib.optionals config.programs.linver.enable [ config.programs.linver.package ]
-      ++ lib.optionals config.programs.execbin.enable [ config.programs.execbin.package ];
+    )
+    ++ lib.optionals cfg.vistathemeplasma.enable [
+      cfg.vistathemeplasma.package
+      cfg.vistathemeplasma.icons.package
+      cfg.vistathemeplasma.cursors.package
+      cfg.vistathemeplasma.sounds.package
+      (pkg "wmptoolbar")
+      (pkg "libplasma-compat")
+      (pkg "aeroshell-vista-session")
+      (pkg "vistathemeplasma-x11-session")
+    ]
+    ++ lib.optionals (cfg.aerothemeplasma.enable || cfg.vistathemeplasma.enable) [
+      pkgs.kdePackages.qtstyleplugin-kvantum
+    ]
+    ++ lib.optionals cfg.aerothemeplasma.sddm.enable [ cfg.aerothemeplasma.sddm.package ]
+    ++ lib.optionals config.programs.linver.enable [ config.programs.linver.package ]
+    ++ lib.optionals config.programs.execbin.enable [ config.programs.execbin.package ];
 
-    # VTP's C++ plasmoids (notably vistatasks) are built against stock
-    # libplasma, but AeroShell's patched libplasma is what provides the
-    # VTP-specific behaviour.  The compat package provides libPlasma*.so
-    # symlinks to libATPlasma*; put it first in the loader path.
     environment.sessionVariables = lib.mkIf cfg.vistathemeplasma.enable {
       LD_LIBRARY_PATH = "${(pkg "libplasma-compat")}/lib";
     };
 
-    # backward compat for users of "programs.aeroshell.fonts.enable"
     programs.aeroshell.fonts = lib.mkIf cfg.fonts.enable {
       segoe.enable = lib.mkDefault true;
       lucida.enable = lib.mkDefault true;
@@ -293,10 +313,8 @@ in
 
     boot.plymouth = lib.mkIf pvcfg.enable {
       theme = "PlymouthVista";
-      themePackages = [ (pvcfg.package.override { settings = pvcfg.settings; }) ];
+      themePackages = [ (pvcfg.package.override { inherit (pvcfg) settings; }) ];
     };
-    # https://github.com/furkrn/PlymouthVista/blob/cc6592a29387462d003c2c95cb9cb5df3fea851f/systemd/slowdown/plymouth-vista-slow-boot-animation.service
-    # https://wiki.archlinux.org/title/Plymouth#Slow_down_boot_to_show_the_full_animation
     systemd.services.plymouth-vista-slow-boot-animation = lib.mkIf (pvcfg.settings.BootSlowdown > 0) {
       description = "Waits for Plymouth animation to finish";
       wantedBy = [ "multi-user.target" ];
@@ -318,16 +336,18 @@ in
       UseShadow = lib.mkDefault true;
     };
 
-    services.displayManager.sddm = lib.mkIf (cfg.aerothemeplasma.sddm.enable || cfg.vistathemeplasma.sddm.enable) {
-      theme = if cfg.vistathemeplasma.sddm.enable then "vista-theme-mod" else "sddm-theme-mod";
-      extraPackages = [ pkgs.kdePackages.kitemmodels ];
-      settings = {
-        Theme = {
-          CursorTheme = if cfg.vistathemeplasma.sddm.enable then "vista-aero-drop" else "aero-drop";
-          CursorSize = 30;
-          Font = lib.mkIf cfg.fonts.segoe.enable "Segoe UI";
+    services.displayManager.sddm =
+      lib.mkIf (cfg.aerothemeplasma.sddm.enable || cfg.vistathemeplasma.sddm.enable)
+        {
+          theme = if cfg.vistathemeplasma.sddm.enable then "vista-theme-mod" else "sddm-theme-mod";
+          extraPackages = [ pkgs.kdePackages.kitemmodels ];
+          settings = {
+            Theme = {
+              CursorTheme = if cfg.vistathemeplasma.sddm.enable then "vista-aero-drop" else "aero-drop";
+              CursorSize = 30;
+              Font = lib.mkIf cfg.fonts.segoe.enable "Segoe UI";
+            };
+          };
         };
-      };
-    };
   };
 }

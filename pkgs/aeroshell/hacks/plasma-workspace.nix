@@ -1,7 +1,7 @@
 {
   kdePackages,
   libplasma,
-  lib
+  lib,
 }:
 kdePackages.plasma-workspace.overrideAttrs (oldAttrs: {
   pname = "aeroshell";
@@ -10,7 +10,10 @@ kdePackages.plasma-workspace.overrideAttrs (oldAttrs: {
     (lib.cmakeFeature "Plasma_DIR" "${libplasma.dev}/lib/cmake/Plasma")
     (lib.cmakeFeature "PlasmaQuick_DIR" "${libplasma.dev}/lib/cmake/PlasmaQuick")
   ];
-  ninjaFlags = [ "plasmashell" "kworkspace" ];
+  ninjaFlags = [
+    "plasmashell"
+    "kworkspace"
+  ];
 
   postPatch = ''
     # rename plasmashell and kworkspace
@@ -46,7 +49,7 @@ kdePackages.plasma-workspace.overrideAttrs (oldAttrs: {
     runHook preInstall
     ninja shell/install libkworkspace/install
     rm -rf $out/lib/qt-6
-    
+
     # drop-ins to make startplasma prefer aeroshell over plasmashell in the theme's login session
     mkdir -p $out/share/systemd/user/plasma-{core.target,plasmashell.service,aeroshell.service}.d
 
@@ -65,6 +68,5 @@ kdePackages.plasma-workspace.overrideAttrs (oldAttrs: {
 
     runHook postInstall
   '';
-  # prevent patching plasma-sourceenv.sh which is not built here
   postInstall = "";
 })
