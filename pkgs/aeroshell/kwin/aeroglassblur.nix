@@ -35,7 +35,9 @@ stdenv.mkDerivation {
   installTargets = "effects_cpp/${session}/kde-effects-aeroglassblur/install";
 
   postInstall = ''
-    configDir="$out/lib/qt-6/plugins/kwin${lib.optionalString (session == "x11") "-x11"}/effects/configs"
+    configDir="$out/lib/qt-6/plugins/kwin${
+      lib.optionalString (session == "x11") "-x11"
+    }/effects/configs"
     if [ -d "$configDir" ]; then
       ln -sf "kwin_aeroglassblur_${session}_config.so" "$configDir/kwin_aeroglassblur_config.so"
     fi

@@ -7,7 +7,7 @@ perSystem:
 }:
 let
   cfg = config.programs.aeroshell;
-  atpkgs = perSystem.config.packages;
+  atpkgs = perSystem.config.packages or (perSystem.packages or { });
 
   pkg = name: cfg.packages.${name} or atpkgs.${name};
 
@@ -29,7 +29,10 @@ in
       enable = lib.mkEnableOption "AeroShell";
 
       session = lib.mkOption {
-        type = lib.types.enum [ "wayland" "x11" ];
+        type = lib.types.enum [
+          "wayland"
+          "x11"
+        ];
         default = if cfg.vistathemeplasma.enable then "x11" else "wayland";
         description = "The display server session to install KWin effects for.";
       };
@@ -237,13 +240,18 @@ in
     ]
     ++ (
       if cfg.session == "x11" then
-        map (name: cfg.packages.${name} or (atpkgs."${name}-x11" or (atpkgs.${name}.override { session = "x11"; }))) [
-          "aeroglassblur"
-          "aeroglide"
-          "launchfeedback"
-          "smodglow"
-          "smodsnap"
-        ]
+        map
+          (
+            name:
+            cfg.packages."${name}-x11" or (atpkgs."${name}-x11" or (cfg.packages.${name} or (atpkgs.${name}.override { session = "x11"; })))
+          )
+          [
+            "aeroglassblur"
+            "aeroglide"
+            "launchfeedback"
+            "smodglow"
+            "smodsnap"
+          ]
       else
         map pkg [
           "aeroglassblur"

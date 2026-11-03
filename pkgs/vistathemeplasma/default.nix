@@ -135,8 +135,11 @@ stdenv.mkDerivation {
       substituteInPlace {} \
         --replace-fail '/usr/share/vistathemeplasma' "$out/share/vistathemeplasma" \;
 
-    substituteInPlace $out/share/plasma/shells/io.gitgud.catpswin56.desktop/contents/configuration/ConfigurationContainmentAppearance.qml \
-      --replace-fail "kwin_aeroglassblur_config.so" 'kwin_aeroglassblur_''${XDG_SESSION_TYPE:-x11}_config.so'
+    find $out/share -type f \( -name '*.qml' -o -name '*.js' \) -exec \
+      substituteInPlace {} \
+        --replace-quiet "org.kde.plasma.core 2.0" "io.gitgud.wackyideas.plasma.core 2.0" \
+        --replace-quiet "org.kde.plasma.core as PlasmaCore" "io.gitgud.wackyideas.plasma.core as PlasmaCore" \
+        --replace-quiet "import org.kde.plasma.core" "import io.gitgud.wackyideas.plasma.core" \;
   '';
 
   passthru.providedSessions = [ "vistathemeplasma" ];

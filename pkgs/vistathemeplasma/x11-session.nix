@@ -19,7 +19,8 @@ stdenvNoCC.mkDerivation {
         substituteInPlace $out/bin/startvtp \
           --replace-fail "/etc/xdg/vistathemeplasma:/etc/xdg:" \
             "${vistathemeplasma}/etc/xdg/vistathemeplasma:${vistathemeplasma}/etc/xdg:/etc/xdg:" \
-          --replace-fail "startplasma-x11" "${kdePackages.plasma-workspace}/bin/startplasma-x11"
+          --replace-fail "startplasma-x11" \
+            "export QT_PLUGIN_PATH=\"/run/current-system/sw/lib/qt-6/plugins:\$HOME/.nix-profile/lib/qt-6/plugins:\$QT_PLUGIN_PATH\"\n${kdePackages.plasma-workspace}/bin/startplasma-x11"
 
         mkdir -p $out/share/xsessions
         cat > $out/share/xsessions/vistathemeplasmax11.desktop << EOF

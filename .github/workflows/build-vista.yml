@@ -43,6 +43,9 @@ jobs:
             .#packages.x86_64-linux.vistathemeplasma-sounds \
             .#packages.x86_64-linux.vistathemeplasma-x11-session \
             .#packages.x86_64-linux.wmptoolbar \
+            .#packages.x86_64-linux.kcmloader \
+            .#packages.x86_64-linux.libplasma \
+            .#packages.x86_64-linux.libplasma-compat \
             .#packages.x86_64-linux.aeroglassblur-x11 \
             .#packages.x86_64-linux.aeroglide-x11 \
             .#packages.x86_64-linux.launchfeedback-x11 \

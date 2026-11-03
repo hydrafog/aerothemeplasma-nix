@@ -41,7 +41,9 @@ stdenv.mkDerivation {
   installTargets = "effects_cpp/${session}/aeroglide/install";
 
   postInstall = ''
-    configDir="$out/lib/qt-6/plugins/kwin${lib.optionalString (session == "x11") "-x11"}/effects/configs"
+    configDir="$out/lib/qt-6/plugins/kwin${
+      lib.optionalString (session == "x11") "-x11"
+    }/effects/configs"
     if [ -d "$configDir" ]; then
       ln -sf "kwin_aeroglide_${session}_config.so" "$configDir/kwin_aeroglide_config.so"
     fi
