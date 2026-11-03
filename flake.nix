@@ -36,6 +36,7 @@
                 repo = "aeroshell-kwin-components";
                 rev = "ba5b59a4b5270a71a17768e0e7a22dc1be926833";
                 hash = "sha256-w+C0bNbf23GIyDcAtjqfDsRXI1dTx2KqU7x+6/cG4rE=";
+                forceFetchGit = true;
               };
               aeroshell-smod-repo = pkgs.fetchFromGitLab {
                 domain = "gitgud.io";
@@ -43,6 +44,7 @@
                 repo = "smod";
                 rev = "b93cffd1d06a34cb89223270fc6256d1ba557e22";
                 hash = "sha256-LB5uKwxmQHctZJHixhlcpg9Mp+SztnYPnuRX0l+9xoM=";
+                forceFetchGit = true;
               };
               aeroshell-workspace-repo = pkgs.fetchFromGitLab {
                 domain = "gitgud.io";
@@ -50,6 +52,7 @@
                 repo = "aeroshell-workspace";
                 rev = "00a39ba08f3b9441b0883f1b82fc4e7e9e6a44b7";
                 hash = "sha256-UGT+MaFwSgLzacdwZTLhaxW5qhaSVa6ZFE6F4XCaHbE=";
+                forceFetchGit = true;
               };
               aerothemeplasma-icons-repo = pkgs.fetchFromGitLab {
                 domain = "gitgud.io";
@@ -57,6 +60,7 @@
                 repo = "atp/aerothemeplasma-icons";
                 rev = "0100536bb0fb4b731b6cf776f3bc6dc5d3c74bfc";
                 hash = "sha256-5tB52/IYB4oz3Zn3TPcSWLfdCLvYLRqxshbGzZyPHzE=";
+                forceFetchGit = true;
               };
               aerothemeplasma-repo = pkgs.fetchFromGitLab {
                 domain = "gitgud.io";
@@ -64,6 +68,7 @@
                 repo = "atp/aerothemeplasma";
                 rev = "f724417af98ad75e8e001ae1711068e297904d4f";
                 hash = "sha256-Jq7aQ3S11edx/CJC3qJOchTDeWepI2XGpZ5/+FmaGy8=";
+                forceFetchGit = true;
               };
 
               vistathemeplasma-repo = pkgs.fetchFromGitHub {
@@ -78,6 +83,7 @@
                 repo = "vtp/vistathemeplasma-icons";
                 rev = "643c34b0b2afbf84689277700d05950ee415bd9e";
                 hash = "sha256-QgWWdfxi5EUrLOJGumeCIgxhShG9/Zadu7Zk8iukjXk=";
+                forceFetchGit = true;
               };
               vistathemeplasma-sounds-repo = pkgs.fetchFromGitLab {
                 domain = "gitgud.io";
@@ -85,6 +91,7 @@
                 repo = "vtp/vistathemeplasma-sounds";
                 rev = "dabc6bfcbc3a0b092f9317861e4fd10d53c986ce";
                 hash = "sha256-2FdRBQt4Rnhu4jQhqV1mPWDGKRYregdjoAfjwvMFn5g=";
+                forceFetchGit = true;
               };
               wmp-toolbar-repo = pkgs.fetchFromGitLab {
                 domain = "gitgud.io";
@@ -92,6 +99,7 @@
                 repo = "wmp-toolbar-plasmoid";
                 rev = "b452aca090af4e9c5413c1476fd87ee4ae722c33";
                 hash = "sha256-bB2Du4EzBIyogs1/X/y2j8SB3tVQtW50aw2tiW04HYA=";
+                forceFetchGit = true;
               };
 
               libplasma = self.callPackage ./pkgs/aeroshell/hacks/libplasma.nix { };
